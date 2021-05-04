@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  *
@@ -16,6 +17,8 @@ public class Board {
     private char[][] OBJECTS;
     
     private ArrayList<Entity> entities;
+
+    private HashSet<Cell> CELLS;
     
     /*
     TODO : HashSet contenant des coordonnées triées.
