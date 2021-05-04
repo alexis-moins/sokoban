@@ -68,8 +68,8 @@ public class Board {
     void fillWhiteSpaces() {
         for (int i = 0; i < this.LENGTH; i++) {
             for (int j = 0; j < this.WIDTH; j++) {
-                if (this.OBJECTS[i][j] ' ')
-                    this.OBJECTS[i][j] = '.';
+                // if (this.OBJECTS[i][j] ' ')
+                //   this.OBJECTS[i][j] = '.';
             }
         }
     }
