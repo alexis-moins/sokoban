@@ -1,64 +1,90 @@
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author Alexis Moins
  */
 class Board {
+    
+    private final String NAME;
 
     private final int LENGTH;
 
     private final int WIDTH;
 
-    private Entity player;
+    private Coordinates player;
+    
+    private final HashMap<Coordinates, Tile> TILES;
 
-    private final HashSet<Tile> TILES;
+    private final ArrayList<Coordinates> BOXES;
 
-    private final HashSet<Entity> BOXES;
-
-    Board(int length, int width) {
+    Board(String name, int length, int width) {
+        this.NAME = name;
         this.LENGTH = length;
         this.WIDTH = width;
-        this.TILES = new HashSet<Tile>();
+        
+        this.TILES = new HashMap<>();
+        this.BOXES = new ArrayList<>();
     }
 
     void addHorizontalWall(int x, int y, int size) {
-        for (int i = x; i < size; i++) {
+        for (int i = x; i < x+size; i++) {
             var wall = Tile.wall(x, y);
-            this.TILES.add(wall);
+            var coord = new Coordinates(i, y);
+            this.TILES.put(coord, wall);
         }
     }
 
     void addVerticalWall(int x, int y, int size) {
-        for (int i = y; i < size; i++) {
+        for (int i = y; i < y+size; i++) {
             var wall = Tile.wall(x, y);
-            this.TILES.add(wall);
+            var coord = new Coordinates(x, i);
+            this.TILES.put(coord, wall);
         }
     }
 
     void setPosition(int x, int y) {
-        this.player = Entity.player(x, y);
+        this.player = new Coordinates(x, y);
     }
 
     void addBox(int x, int y) {
-        var box = Entity.box(x, y);
-        this.BOXES.add(box);
+        var coord = new Coordinates(x, y);
+        this.BOXES.add(coord);
+    }
+    
+    void addTarget(int x, int y) {
+        var target = Tile.target(x, y);
+        var coord = new Coordinates(x, y);
+        this.TILES.put(coord, target);
     }
 
     void display() {
+        displayColumnNumbers();
         for (int i = 0; i < this.WIDTH; i++) {
+            System.out.print("\n" + i);
             for (int j = 0; j < this.LENGTH; j++) {
-                var tile = this.TILES.get(i);
-                if (tile.isCrossedBy(this.player)) {
-                    System.out.print('P');
-                } else if (tile.contains(this.BOXES)) {
-                    System.out.print('#');
+                var coord = new Coordinates(j, i);
+                if (this.player.equals(coord)) {
+                    System.out.print(" " + 'P');
+                } else if (this.BOXES.contains(coord)) {
+                    System.out.print(" " + 'C');
+                } else if (this.TILES.containsKey(coord)) {
+                    System.out.print(" " + this.TILES.get(coord)
+                            .character());
                 } else {
-                    System.out.print(tile.character());
+                    System.out.print(" " + '.');
                 }
             }
-            System.out.println(" ");
+        }
+        System.out.println(" ");
+    }
+    
+    void displayColumnNumbers() {
+        System.out.print(" ");
+        for (int i = 0; i < this.LENGTH; i++) {
+            System.out.print(" " + i);
         }
     }
 

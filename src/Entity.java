@@ -8,9 +8,9 @@ class Entity {
        this.COORDINATES = new Coordinates(x, y);
        this.CHARACTER = character;
     }
-
-    public void setCharacter(char character) {
-        this.CHARACTER = character;
+    
+    Coordinates coordinates() {
+        return this.COORDINATES;
     }
 
     /**

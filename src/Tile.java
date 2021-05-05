@@ -1,6 +1,4 @@
 
-import java.util.HashSet;
-
 class Tile {
 
     private char character = '.';
@@ -25,7 +23,7 @@ class Tile {
     }
 
     public static Tile target(int x, int y) {
-        var wall = new Tile(x, y, 'T', true);
+        var wall = new Tile(x, y, 'x', true);
         return wall;
     }
 
@@ -37,16 +35,6 @@ class Tile {
      */
     boolean isCrossedBy(Coordinates playerCoordinates) {
         return this.COORDINATES == playerCoordinates;
-    }
-
-    /**
-     * Return true if the player has the same coordinates as the
-     * current tile.
-     *
-     * @return true if the player crosses the tile.
-     */
-    boolean contains(HashSet<Coordinates> boxes) {
-
     }
 
     /**
