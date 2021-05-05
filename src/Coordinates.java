@@ -1,4 +1,4 @@
-Coordinates {
+class Coordinates {
     
     private final int X;
 
