@@ -1,12 +1,15 @@
+package game;
 
 import java.util.Scanner;
+
+import exceptions.SokobanException;
 
 /**
  * Class representing a level in the game.
  *
  * @author Alexis Moins
  */
-class Level {
+public class Level {
 
     private final Board board;
 
@@ -27,15 +30,6 @@ class Level {
         } return true;
     }
 
-    private void displayObjective() {
-        System.out.println("\nYou will be presented with a level. Your objective     # = a wall");
-        System.out.println("is to thoroughly place all the wooden crated of the    P = your character");
-        System.out.println("level on the specified targets.                        C = wooden crates");
-        System.out.println("                                                       x = the targets");
-        System.out.println("                                                       . = the ground");
-
-    }
-
     private String getPlayerMove() {
         Scanner scanner = new Scanner(System.in);
         return scanner.next()
@@ -43,7 +37,6 @@ class Level {
     }
 
     public void start() {
-        displayObjective();
         while (!isCompleted()) {
             this.board.draw();
             String move = getPlayerMove();
@@ -65,8 +58,11 @@ class Level {
         var direction = Direction.correspondingTo(move);
         Coordinates position = this.board.playerPosition().next(direction);
         char tile = this.board.tileCharacter(position);
-        if (tile == '.')
+        if (tile == '.') {
             this.board.setPlayerPosition(position.x(), position.y());
+        } else if (tile == 'C' && this.board.crateCanBeMoved()) {
+            this.board.setPlayerPosition(position.x(), position.y());
+        }
     }
 
 }

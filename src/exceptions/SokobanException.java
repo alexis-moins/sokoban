@@ -1,9 +1,11 @@
+package exceptions;
+
 /**
  * Class implementing the generic exception for the game.
  *
  * @author Alexis Moins
  */
-class SokobanException extends Exception {
+public class SokobanException extends Exception {
 
     /**
      * Parameterised constructor creating a new exception.

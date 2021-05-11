@@ -1,3 +1,5 @@
+package game;
+
 /**
  * Class representing an entity on the board with a string representation and 
  * coordinates.

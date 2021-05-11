@@ -10,12 +10,16 @@ manifest.mf
 nbactions.xml
 nb-configuration.xml
 
-# OS
+# OS & editor
+*.swp
 .DS_Store
 
-# Misc
+# Java
 tags
-*.swp
+*.class
+Makefile
+
+# Misc
 pom.xml.tag
 release.properties
 pom.xml.releaseBackup

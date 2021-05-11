@@ -1,3 +1,5 @@
+package game;
+
 /**
  * Class representing a tile on the board with a string representation and 
  * information about its collisions.

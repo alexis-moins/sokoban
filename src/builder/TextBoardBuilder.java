@@ -1,5 +1,10 @@
+package builder;
 
 import java.util.ArrayList;
+
+import game.Board;
+import game.Direction;
+import exceptions.InvalidCharacterException;
 
 /**
  * Class creating a board from strings.
@@ -29,7 +34,7 @@ class TextBoardBuilder implements BoardBuilder {
      *
      * @param row a string to be added
      */
-    void addRow(String row) {
+    void append(String row) {
         this.rows.add(row);
         this.rowNumber++;
         if (this.columnNumber == 0)

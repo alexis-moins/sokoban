@@ -1,3 +1,5 @@
+package game;
+
 import java.util.Set;
 import java.util.HashMap;
 
@@ -6,7 +8,7 @@ import java.util.HashMap;
  *
  * @author Alexis Moins
  */
-final class Board {
+public final class Board {
 
     /**
      * The name of the board / level.
@@ -32,7 +34,7 @@ final class Board {
      * @param length the length of the board
      * @param width the width of the board
      */
-    Board(String name, int length, int width) {
+    public Board(String name, int length, int width) {
         this.name_ = name;
         this.width_ = width;
         this.length_ = length;
@@ -71,7 +73,7 @@ final class Board {
      * @param size the size of the wall
      * @param direction the direction of the wall
      */
-    void addWall(int x, int y, int size, Direction direction) {
+    public void addWall(int x, int y, int size, Direction direction) {
         var wall = Tile.wall();
         var coord = new Coordinates(x, y);
         for (int i = y; i < y + size; i++) {
@@ -81,26 +83,12 @@ final class Board {
     }
 
     /**
-     * Set the player's position on the board at the given coordinates.
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     */
-    void setPlayerPosition(int x, int y) {
-        this.player.setPosition(x, y);
-    }
-
-    Coordinates playerPosition() {
-        return this.player.coordinates();
-    }
-
-    /**
      * Add a box on the board at the given coordinates.
      *
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    void addBox(int x, int y) {
+    public void addBox(int x, int y) {
         var coord = new Coordinates(x, y);
         var box = Entity.box();
         this.boxes_.put(coord, box);
@@ -112,10 +100,24 @@ final class Board {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    void addTarget(int x, int y) {
+    public void addTarget(int x, int y) {
         var target = Tile.target();
         var coord = new Coordinates(x, y);
         this.targets_.put(coord, target);
+    }
+
+    /**
+     * Set the player's position on the board at the given coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
+    public void setPlayerPosition(int x, int y) {
+        this.player.setPosition(x, y);
+    }
+
+    Coordinates playerPosition() {
+        return this.player.coordinates();
     }
 
     /**

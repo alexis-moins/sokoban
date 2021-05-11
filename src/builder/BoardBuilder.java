@@ -1,3 +1,8 @@
+package builder;
+
+import game.Board;
+import exceptions.SokobanException;
+
 /**
  * Interface listing the behaviour for builder classes.
  *

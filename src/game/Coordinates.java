@@ -1,3 +1,5 @@
+package game;
+
 /**
  * Class representing the coordinates on the board.
  *

@@ -1,9 +1,13 @@
+package game;
+
+import exceptions.InvalidDirectionException;
+
 /**
  * Class representing the four possible directions on the board.
  *
  * @author Alexis Moins
  */
-enum Direction {
+public enum Direction {
 
     NORTH,
     SOUTH,
