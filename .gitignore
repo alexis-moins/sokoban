@@ -14,6 +14,7 @@ nb-configuration.xml
 .DS_Store
 
 # Misc
+tags
 *.swp
 pom.xml.tag
 release.properties

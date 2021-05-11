@@ -1,57 +1,63 @@
-
+/**
+ * Class representing a tile on the board with a string representation and 
+ * information about its collisions.
+ *
+ * @author Alexis Moins
+ */
 class Tile {
 
-    private char character = '.';
+    /**
+     * The CHARACTER representation of the tile.
+     */
+    private final char CHARACTER;
 
-    private boolean canBeCrossed = true;
+    /**
+     * True if entities like boxes and the player can cross the tile.
+     */
+    private final boolean CAN_BE_CROSSED;
 
-    private final Coordinates COORDINATES;
-
-    Tile(int x, int y) {
-        this.COORDINATES = new Coordinates(x, y);
-    }
-
-    Tile(int x, int y, char character, boolean canBeCrossed) {
-        this.character = character;
-        this.canBeCrossed = canBeCrossed;
-        this.COORDINATES = new Coordinates(x, y);
-    }
-
-    public static Tile wall(int x, int y) {
-        var wall = new Tile(x, y, '#', false);
-        return wall;
-    }
-
-    public static Tile target(int x, int y) {
-        var wall = new Tile(x, y, 'x', true);
-        return wall;
+    /**
+     * Parameterised constructor creating a new Tile object.
+     */
+    Tile(char character, boolean canBeCrossed) {
+        this.CHARACTER = character;
+        this.CAN_BE_CROSSED = canBeCrossed;
     }
 
     /**
-     * Return true if the player has the same coordinates as the
-     * current tile.
+     * Return a new Tile object representing a wall.
      *
-     * @return true if the player crosses the tile.
+     * @return a tile object.
      */
-    boolean isCrossedBy(Coordinates playerCoordinates) {
-        return this.COORDINATES == playerCoordinates;
+    public static Tile wall() {
+        return new Tile('#', false);
     }
 
     /**
-     * Accessor for the CHARACTER attriute.
+     * Return a new Tile object representing a target.
      *
-     * @return the current tile's character.
+     * @return a tile object.
      */
-    public char character() {
-        return this.character;
+    public static Tile target() {
+        return new Tile('x', true);
     }
 
-    public Coordinates coordinates() {
-        return this.COORDINATES;
-    }
-
+    /**
+     * Return true if the tile can be crossed by entities.
+     *
+     * @return a boolean.
+     */
     public boolean canBeCrossed() {
-        return this.canBeCrossed;
+        return this.CAN_BE_CROSSED;
+    }
+
+    /**
+     * Return the representation of the tile.
+     *
+     * @return a character
+     */
+    char character() {
+        return this.CHARACTER;
     }
 
 }
