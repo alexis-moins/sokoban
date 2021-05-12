@@ -6,53 +6,39 @@ package game;
  *
  * @author Alexis Moins
  */
-class Entity {
-
-    /**
-     * The representation of an entity was a character.
-     */
-    private final char character_;
-
-    /**
-     * The coordinates representing the position of the entity on the board.
-     */
-    private Coordinates coordinates_;
+class Entity extends SokobanElement {
 
     /**
      * Parameterised constructor creating a new entity object.
      *
-     * @param character the character representing the entity
+     * @param x the position on the x axis
+     * @param y the position on the y axis
+     * @param type the type of the element
      */
-    Entity(char character) {
-        this.coordinates_ = null;
-        this.character_ = character;
-    }
-
-    /**
-     * Return the coordinates of the entity.
-     *
-     * @return a Coordinates object
-     */
-    Coordinates coordinates() {
-        return this.coordinates_;
+    Entity(int x, int y, Type type) {
+        super(x, y, type);
     }
 
     /**
      * Create and return a new box entity (factory method).
      *
+     * @param x the position on the x axis
+     * @param y the position on the y axis
      * @return a box Entity
      */
-    public static Entity box() {
-        return new Entity('C');
+    public static Entity newBox(int x, int y) {
+        return new Entity(x, y, Type.BOX);
     }
 
     /**
      * Create and return a new player entity (factory method).
      *
+     * @param x the position on the x axis
+     * @param y the position on the y axis
      * @return a player Entity
      */
-    public static Entity player() {
-        return new Entity('P');
+    public static Entity newPlayer(int x, int y) {
+        return new Entity(x, y, Type.PLAYER);
     }
 
     /**
@@ -62,25 +48,7 @@ class Entity {
      * @param y the y coordinate
      */
     public void setPosition(int x, int y) {
-        this.coordinates_ = new Coordinates(x, y);
-    }
-
-    /**
-     * Return true if the entity is at the given position.
-     *
-     * @return a boolean
-     */
-    public boolean isAtPosition(Coordinates coord) {
-        return this.coordinates_.equals(coord);
-    }
-
-    /**
-     * Return the character representing the entity.
-     *
-     * @return a character
-     */
-    char character() {
-        return this.character_;
+        this.coordinates = new Coordinates(x, y);
     }
 
 }

@@ -5,7 +5,7 @@ package game;
  *
  * @author Alexis Moins.
  */
-class Coordinates {
+public class Coordinates {
     
     /**
      * The position on the x axis.

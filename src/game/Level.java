@@ -1,5 +1,6 @@
 package game;
 
+import exceptions.ElementNotFoundException;
 import java.util.Scanner;
 
 import exceptions.SokobanException;
@@ -11,10 +12,10 @@ import exceptions.SokobanException;
  */
 public class Level {
 
-    private final Board board;
+    private final Board BOARD;
 
     public Level(Board board) {
-        this.board = board;
+        this.BOARD = board;
     }
 
     /**
@@ -24,9 +25,13 @@ public class Level {
      * @return a boolean
      */
     private boolean isCompleted() {
-        for (var coord : this.board.targets()) {
-            if (!this.board.boxes().contains(coord))
+        for (Tile target : this.BOARD.targets()) {
+            try {
+                var coord = target.coordinates();
+                SokobanElement validBox = this.BOARD.findEntity(coord);
+            } catch (ElementNotFoundException e) {
                 return false;
+            }
         } return true;
     }
 
@@ -38,7 +43,7 @@ public class Level {
 
     public void start() {
         while (!isCompleted()) {
-            this.board.draw();
+            this.BOARD.draw();
             String move = getPlayerMove();
             try {
                 playMove(move);
@@ -56,12 +61,13 @@ public class Level {
      */
     private void playMove(String move) throws SokobanException {
         var direction = Direction.correspondingTo(move);
-        Coordinates position = this.board.playerPosition().next(direction);
-        char tile = this.board.tileCharacter(position);
-        if (tile == '.') {
-            this.board.setPlayerPosition(position.x(), position.y());
-        } else if (tile == 'C' && this.board.crateCanBeMoved()) {
-            this.board.setPlayerPosition(position.x(), position.y());
+        var coordinates = this.BOARD.player()
+                .coordinates().next(direction);
+        try {
+            var destination = this.BOARD.findTile(coordinates);
+        
+        } catch (SokobanException e) {
+            System.err.println("/!\\ Out of bound destination");
         }
     }
 

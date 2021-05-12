@@ -1,7 +1,9 @@
 package game;
 
-import java.util.Set;
-import java.util.HashMap;
+import exceptions.ElementNotFoundException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Class representing the board.
@@ -13,19 +15,15 @@ public final class Board {
     /**
      * The name of the board / level.
      */
-    private final String name_;
+    private final String NAME;
 
-    private final int length_;
+    private final int WIDTH;
+    
+    private final int LENGTH;
 
-    private final int width_;
+    private final ArrayList<Tile> TILES;
 
-    private Entity player;
-
-    private final HashMap<Coordinates, Tile> walls_;
-
-    private final HashMap<Coordinates, Tile> targets_;
-
-    private final HashMap<Coordinates, Entity> boxes_;
+    private final ArrayList<Entity> ENTITIES;
 
     /**
      * Parameterised constructor creating a new board.
@@ -35,50 +33,58 @@ public final class Board {
      * @param width the width of the board
      */
     public Board(String name, int length, int width) {
-        this.name_ = name;
-        this.width_ = width;
-        this.length_ = length;
-        this.player = Entity.player();
+        this.NAME = name;
+        this.WIDTH = width;
+        this.LENGTH = length;
 
-        this.walls_ = new HashMap<>();
-        this.boxes_ = new HashMap<>();
-        this.targets_ = new HashMap<>();
+        this.TILES = new ArrayList<>();
+        this.ENTITIES = new ArrayList<>();
     }
 
     /**
-     * Return the set of the coordinates of each and every targets present on
-     * the board.
+     * Return the set of each and every targets present on the board.
      *
-     * @return a set of coordinates
+     * @return a list of Tile objects
      */
-    Set<Coordinates> targets() {
-        return this.targets_.keySet();
+    List<Tile> targets() {
+        return this.TILES.stream()
+                .filter(tile -> tile.isOfType(Type.TARGET))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     /**
-     * Return the set of the coordinates of each and every boxes present on
-     * the board.
+     * Return the set of each and every boxes present on the board.
      *
-     * @return a set of coordinates
+     * @return a list of Entity objects
      */
-    Set<Coordinates> boxes() {
-        return this.boxes_.keySet();
+    List<Entity> boxes() {
+        return this.ENTITIES.stream()
+                .filter(entity -> entity.isOfType(Type.BOX))
+                .collect(Collectors.toUnmodifiableList());
+    }
+    
+    /**
+     * Return the player.
+     *
+     * @return an Entity object
+     */
+    Entity player() {
+        return this.ENTITIES.stream()
+                .filter(entity -> entity.isOfType(Type.PLAYER))
+                .findFirst().orElse(null);
     }
 
     /**
-     * Add a wall of the given size at the given coordinates.
+     * Add a vertical wall of the given size at the given coordinates.
      *
      * @param x the x coordinate
      * @param y the y coordinate
      * @param size the size of the wall
-     * @param direction the direction of the wall
      */
-    public void addWall(int x, int y, int size, Direction direction) {
-        var wall = Tile.wall();
-        var coord = new Coordinates(x, y);
+    public void addVerticalWall(int x, int y, int size) {
         for (int i = y; i < y + size; i++) {
-            this.walls_.put(coord, wall);
-            coord = coord.next(direction);
+            Tile wall = Tile.newWall(x, y);
+            this.TILES.add(wall);
         }
     }
 
@@ -89,9 +95,8 @@ public final class Board {
      * @param y the y coordinate
      */
     public void addBox(int x, int y) {
-        var coord = new Coordinates(x, y);
-        var box = Entity.box();
-        this.boxes_.put(coord, box);
+        Entity box = Entity.newBox(x, y);
+        this.ENTITIES.add(box);
     }
 
     /**
@@ -101,9 +106,8 @@ public final class Board {
      * @param y the y coordinate
      */
     public void addTarget(int x, int y) {
-        var target = Tile.target();
-        var coord = new Coordinates(x, y);
-        this.targets_.put(coord, target);
+        Tile target = Tile.newTarget(x, y);
+        this.TILES.add(target);
     }
 
     /**
@@ -113,11 +117,8 @@ public final class Board {
      * @param y the y coordinate
      */
     public void setPlayerPosition(int x, int y) {
-        this.player.setPosition(x, y);
-    }
-
-    Coordinates playerPosition() {
-        return this.player.coordinates();
+        Entity player = Entity.newPlayer(x, y);
+        this.ENTITIES.add(player);
     }
 
     /**
@@ -125,31 +126,44 @@ public final class Board {
      */
     void draw() {
         displayColumnNumbers();
-        for (int i = 0; i < this.width_; i++) {
+        for (int i = 0; i < this.WIDTH; i++) {
             System.out.print("\n" + i);
-            for (int j = 0; j < this.length_; j++) {
+            for (int j = 0; j < this.LENGTH; j++) {
+                char character;
                 var coord = new Coordinates(j, i);
-                char tileCharacter = tileCharacter(coord);
-                System.out.print(" " + tileCharacter);
+                try {
+                    SokobanElement element = findElement(coord);
+                    character = element.character();
+                } catch (ElementNotFoundException e) {
+                    character = '.';
+                }
+                System.out.print(" " + character);
             }
         }
         System.out.print("\n");
     }
-
-    /**
-     * Return the adequate character to represent the given tile on the board.
-     *
-     * @return a character
-     */
-    char tileCharacter(Coordinates coord) {
-        char tileCharacter = '.';
-        if (this.player.isAtPosition(coord))
-            tileCharacter = this.player.character();
-        else if (this.boxes_.containsKey(coord))
-            tileCharacter = this.boxes_.get(coord).character();
-        else if (this.walls_.containsKey(coord))
-            tileCharacter = this.walls_.get(coord).character();
-        return tileCharacter;
+    
+    SokobanElement findElement(Coordinates coord) throws ElementNotFoundException {
+        SokobanElement element;
+        try {
+            element = findEntity(coord);
+        } catch (ElementNotFoundException e) {
+            element = findTile(coord);
+        } return element;
+    }
+    
+    SokobanElement findEntity(Coordinates coord) throws ElementNotFoundException {
+        return this.ENTITIES.stream()
+                .filter(entity -> entity.isAtPosition(coord))
+                .findFirst().orElseThrow(() 
+                        -> new ElementNotFoundException(coord));
+    }
+    
+    SokobanElement findTile(Coordinates coord) throws ElementNotFoundException {
+        return this.TILES.stream()
+                .filter(tile -> tile.isAtPosition(coord))
+                .findFirst().orElseThrow(() 
+                        -> new ElementNotFoundException(coord));
     }
 
     /**
@@ -157,7 +171,7 @@ public final class Board {
      */
     void displayColumnNumbers() {
         System.out.print(" ");
-        for (int i = 0; i < this.length_; i++) {
+        for (int i = 0; i < this.LENGTH; i++) {
             System.out.print(" " + i);
         }
     }

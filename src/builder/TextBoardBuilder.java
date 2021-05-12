@@ -3,7 +3,6 @@ package builder;
 import java.util.ArrayList;
 
 import game.Board;
-import game.Direction;
 import exceptions.InvalidCharacterException;
 
 /**
@@ -68,7 +67,7 @@ class TextBoardBuilder implements BoardBuilder {
                         board.setPlayerPosition(x, y);
                         break;
                     case "#":
-                        board.addWall(x, y, 1, Direction.EAST);
+                        board.addVerticalWall(x, y, 1);
                         break;
                     case "x":
                         board.addTarget(x, y);

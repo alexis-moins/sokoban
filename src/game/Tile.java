@@ -6,42 +6,39 @@ package game;
  *
  * @author Alexis Moins
  */
-class Tile {
-
-    /**
-     * The CHARACTER representation of the tile.
-     */
-    private final char CHARACTER;
-
-    /**
-     * True if entities like boxes and the player can cross the tile.
-     */
-    private final boolean CAN_BE_CROSSED;
+class Tile extends SokobanElement {
 
     /**
      * Parameterised constructor creating a new Tile object.
+     *
+     * @param x the position on the x axis
+     * @param y the position on the y axis
+     * @param type the type of the element
      */
-    Tile(char character, boolean canBeCrossed) {
-        this.CHARACTER = character;
-        this.CAN_BE_CROSSED = canBeCrossed;
+    Tile(int x, int y, Type type) {
+        super(x, y, type);
     }
 
     /**
      * Return a new Tile object representing a wall.
      *
-     * @return a tile object.
+     * @param x the position on the x axis
+     * @param y the position on the y axis
+     * @return a Tile object.
      */
-    public static Tile wall() {
-        return new Tile('#', false);
+    public static Tile newWall(int x, int y) {
+        return new Tile(x, y, Type.WALL);
     }
 
     /**
      * Return a new Tile object representing a target.
      *
-     * @return a tile object.
+     * @param x the position on the x axis
+     * @param y the position on the y axis
+     * @return a Tile object.
      */
-    public static Tile target() {
-        return new Tile('x', true);
+    public static Tile newTarget(int x, int y) {
+        return new Tile(x, y, Type.TARGET);
     }
 
     /**
@@ -50,16 +47,7 @@ class Tile {
      * @return a boolean.
      */
     public boolean canBeCrossed() {
-        return this.CAN_BE_CROSSED;
-    }
-
-    /**
-     * Return the representation of the tile.
-     *
-     * @return a character
-     */
-    char character() {
-        return this.CHARACTER;
+        return this.TYPE.canBeCrossed();
     }
 
 }
