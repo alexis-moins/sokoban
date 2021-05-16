@@ -6,7 +6,7 @@ package game;
  *
  * @author Alexis Moins
  */
-class Tile extends SokobanElement {
+class Tile extends BoardElement {
 
     /**
      * Parameterised constructor creating a new Tile object.

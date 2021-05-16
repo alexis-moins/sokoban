@@ -25,10 +25,10 @@ public class Level {
      * @return a boolean
      */
     private boolean isCompleted() {
-        for (Tile target : this.BOARD.targets()) {
+        for (var target : this.BOARD.targets()) {
             try {
-                var coord = target.coordinates();
-                SokobanElement validBox = this.BOARD.findEntity(coord);
+                Coordinates coord = target.coordinates();
+                BoardElement validBox = this.BOARD.findElement(coord);
             } catch (ElementNotFoundException e) {
                 return false;
             }
@@ -64,8 +64,7 @@ public class Level {
         var coordinates = this.BOARD.player()
                 .coordinates().next(direction);
         try {
-            var destination = this.BOARD.findTile(coordinates);
-        
+            var destination = this.BOARD.findElement(coordinates);
         } catch (SokobanException e) {
             System.err.println("/!\\ Out of bound destination");
         }

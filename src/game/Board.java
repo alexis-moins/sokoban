@@ -18,12 +18,10 @@ public final class Board {
     private final String NAME;
 
     private final int WIDTH;
-    
+
     private final int LENGTH;
 
-    private final ArrayList<Tile> TILES;
-
-    private final ArrayList<Entity> ENTITIES;
+    private final ArrayList<BoardElement> TILES;
 
     /**
      * Parameterised constructor creating a new board.
@@ -36,9 +34,24 @@ public final class Board {
         this.NAME = name;
         this.WIDTH = width;
         this.LENGTH = length;
-
         this.TILES = new ArrayList<>();
-        this.ENTITIES = new ArrayList<>();
+    }
+
+    /**
+     * Return the name of the board.
+     *
+     * @return a string
+     */
+    public String name() {
+        return this.NAME;
+    }
+
+    public int length() {
+        return this.LENGTH;
+    }
+
+    public int width() {
+        return this.WIDTH;
     }
 
     /**
@@ -46,10 +59,10 @@ public final class Board {
      *
      * @return a list of Tile objects
      */
-    List<Tile> targets() {
+    List<BoardElement> targets() {
         return this.TILES.stream()
-                .filter(tile -> tile.isOfType(Type.TARGET))
-                .collect(Collectors.toUnmodifiableList());
+            .filter(tile -> tile.isOfType(Type.TARGET))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -57,21 +70,21 @@ public final class Board {
      *
      * @return a list of Entity objects
      */
-    List<Entity> boxes() {
-        return this.ENTITIES.stream()
-                .filter(entity -> entity.isOfType(Type.BOX))
-                .collect(Collectors.toUnmodifiableList());
+    List<BoardElement> boxes() {
+        return this.TILES.stream()
+            .filter(entity -> entity.isOfType(Type.BOX))
+            .collect(Collectors.toUnmodifiableList());
     }
-    
+
     /**
      * Return the player.
      *
      * @return an Entity object
      */
-    Entity player() {
-        return this.ENTITIES.stream()
-                .filter(entity -> entity.isOfType(Type.PLAYER))
-                .findFirst().orElse(null);
+    BoardElement player() {
+        return this.TILES.stream()
+            .filter(entity -> entity.isOfType(Type.PLAYER))
+            .findFirst().orElse(null);
     }
 
     /**
@@ -96,7 +109,7 @@ public final class Board {
      */
     public void addBox(int x, int y) {
         Entity box = Entity.newBox(x, y);
-        this.ENTITIES.add(box);
+        this.TILES.add(box);
     }
 
     /**
@@ -118,7 +131,7 @@ public final class Board {
      */
     public void setPlayerPosition(int x, int y) {
         Entity player = Entity.newPlayer(x, y);
-        this.ENTITIES.add(player);
+        this.TILES.add(player);
     }
 
     /**
@@ -132,7 +145,7 @@ public final class Board {
                 char character;
                 var coord = new Coordinates(j, i);
                 try {
-                    SokobanElement element = findElement(coord);
+                    BoardElement element = findElement(coord);
                     character = element.character();
                 } catch (ElementNotFoundException e) {
                     character = '.';
@@ -142,28 +155,12 @@ public final class Board {
         }
         System.out.print("\n");
     }
-    
-    SokobanElement findElement(Coordinates coord) throws ElementNotFoundException {
-        SokobanElement element;
-        try {
-            element = findEntity(coord);
-        } catch (ElementNotFoundException e) {
-            element = findTile(coord);
-        } return element;
-    }
-    
-    SokobanElement findEntity(Coordinates coord) throws ElementNotFoundException {
-        return this.ENTITIES.stream()
-                .filter(entity -> entity.isAtPosition(coord))
-                .findFirst().orElseThrow(() 
-                        -> new ElementNotFoundException(coord));
-    }
-    
-    SokobanElement findTile(Coordinates coord) throws ElementNotFoundException {
+
+    BoardElement findElement(Coordinates coord) throws ElementNotFoundException {
         return this.TILES.stream()
-                .filter(tile -> tile.isAtPosition(coord))
-                .findFirst().orElseThrow(() 
-                        -> new ElementNotFoundException(coord));
+            .filter(tile -> tile.isAtPosition(coord))
+            .findFirst().orElseThrow(() 
+                    -> new ElementNotFoundException(coord));
     }
 
     /**

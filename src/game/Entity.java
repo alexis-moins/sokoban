@@ -6,7 +6,7 @@ package game;
  *
  * @author Alexis Moins
  */
-class Entity extends SokobanElement {
+class Entity extends BoardElement {
 
     /**
      * Parameterised constructor creating a new entity object.

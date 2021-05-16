@@ -5,7 +5,7 @@ package game;
  *
  * @author Alexis Moins
  */
-abstract class SokobanElement {
+abstract class BoardElement {
 
     /**
      * The type of the element.
@@ -24,7 +24,7 @@ abstract class SokobanElement {
      * @param y the position on the y axis
      * @param type the type of the element
      */
-    SokobanElement(int x, int y, Type type) {
+    BoardElement(int x, int y, Type type) {
         this.TYPE = type;
         this.coordinates = new Coordinates(x, y);
     }

@@ -16,18 +16,23 @@ import exceptions.InvalidCharacterException;
  */
 public class FileBoardBuilder implements BoardBuilder {
 
-    private final ArrayList<String> board_;
+    private final ArrayList<String> BOARD;
 
     public FileBoardBuilder() {
-        this.board_ = new ArrayList<>();
+        this.BOARD = new ArrayList<>();
     }
 
-
-    public static FileBoardBuilder open(String path) {
+    /**
+     * Return a builder created from a text file.
+     *
+     * @param path the path leading to the text file
+     * @return a FileBoardBuilder object
+     */
+    public static FileBoardBuilder deserialise(String path) {
         var builder = new FileBoardBuilder();
         try (Scanner scanner = new Scanner(new File(path))) {
             while (scanner.hasNextLine()) {
-                builder.board_.add(scanner.nextLine());
+                builder.BOARD.add(scanner.nextLine());
             }
         } catch (FileNotFoundException ex) {
             System.err.println("Unable to open file under " + path);
@@ -35,18 +40,23 @@ public class FileBoardBuilder implements BoardBuilder {
         return builder;
     }
 
+    public TextBoardBuilder toTextBuilder() {
+        var builder = new TextBoardBuilder(this.BOARD.get(0));
+        for (int i = 1; i < this.BOARD.size(); i++) {
+            builder.append(this.BOARD.get(i));
+        }
+        return builder;
+    }
+
     /**
-     * Create and return a builder from the information from a file.
+     * Create and return a board created with the current builder.
      *
      * @return a builder object
      * @throws InvalidCharacterException the builder couldn't be built
      */
     @Override
     public Board build() throws InvalidCharacterException {
-        var builder = new TextBoardBuilder(this.board_.get(0));
-        for (int i = 1; i < this.board_.size(); i++) {
-            builder.append(this.board_.get(i));
-        }
+        var builder = toTextBuilder();
         return builder.build();
     }
 

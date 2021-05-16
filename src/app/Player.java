@@ -1,10 +1,11 @@
 package app;
 
 import java.util.Scanner;
-import java.io.PrintStream;
+import java.sql.SQLException;
 
 import game.Level;
 import builder.FileBoardBuilder;
+import database.Administrator;
 import exceptions.SokobanException;
 
 /**
@@ -13,7 +14,7 @@ import exceptions.SokobanException;
  */
 public class Player {
 
-    static final PrintStream out = System.out;
+    private static final String PATH = "data/Sokoban.db";
 
     private static final Scanner in = new Scanner(System.in);
 
@@ -21,11 +22,15 @@ public class Player {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        out.println("Sokoban (そうこばん)");
-        out.println("====================");
-            out.println("1. Play a game");
-        out.println("2. Quit");
+        displayMainMenu();
         mainMenu();
+    }
+    
+    private static void displayMainMenu() {
+        System.out.println("\nSokoban (そうこばん)\n");
+        System.out.println("1. Play a game");
+        System.out.println("2. Manage boards");
+        System.out.println("3. Quit");
     }
 
     /**
@@ -47,26 +52,27 @@ public class Player {
             choice = getUserInput();
             switch (choice) {
                 case "1": 
-                    loadBoard("src/board.txt");
                     break;
                 case "2":
+                    manageBoards();
+                    displayMainMenu();
+                    break;
+                case "3":
                     finished = true;
                     break;
                 default:
-                    out.println("Invalid choice");
+                    System.err.println("Invalid choice");
                     break;
             }
         }
     }
 
-    private static void loadBoard(String path) {
+    private static void manageBoards() {
         try {
-            var builder = FileBoardBuilder.open(path);
-            var board = builder.build();
-            var level = new Level(board);
-            level.start();
-        } catch (SokobanException e) {
-            System.err.println(e.getMessage());
+            var administrator = Administrator.manageDatabase(PATH);
+            administrator.menu();
+        } catch (SQLException exception) {
+            System.err.println("* " + exception.getMessage());
         }
     }
 
