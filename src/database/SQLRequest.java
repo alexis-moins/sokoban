@@ -29,4 +29,10 @@ class SQLRequest {
 
     static final String GET_BOARDS_INFO = "SELECT * FROM BOARDS";
 
+    static final String GET_BOARD_WITH_ID = "SELECT * FROM ROWS WHERE boardID = ?";
+
+    static final String DELETE_ROWS = "DELETE FROM ROWS WHERE boardID = ?";
+
+    static final String DELETE_BOARD = "DELETE FROM BOARDS WHERE boardID = ?";
+
 }

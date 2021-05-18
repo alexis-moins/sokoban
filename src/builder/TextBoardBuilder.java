@@ -38,7 +38,7 @@ public class TextBoardBuilder implements BoardBuilder {
      *
      * @param name the name of the board
      */
-    TextBoardBuilder(String name) {
+    public TextBoardBuilder(String name) {
         this.WIDTH = 0;
         this.LENGTH = 0;
         this.NAME = name;
@@ -87,7 +87,7 @@ public class TextBoardBuilder implements BoardBuilder {
      *
      * @param row a string to be added
      */
-    void append(String row) {
+    public void append(String row) {
         this.ROWS.add(row);
         this.WIDTH++;
         if (this.LENGTH == 0)

@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 
 import game.Board;
 import builder.TextBoardBuilder;
+import exceptions.InvalidCharacterException;
 
 /**
  * Class representing a database with an open connection.
@@ -83,43 +84,71 @@ class Database {
     private void insertIntoRowsTable(String ID, TextBoardBuilder board) throws SQLException {
         String SQL = SQLRequest.INSERT_INTO_ROWS;
         for (int i = 0; i < board.width(); i++) {
-            try {
-                var statement = this.CONNECTION.prepareStatement(SQL);
-                statement.setString(1, ID);
-                statement.setInt(2, i);
-                statement.setString(3, board.getRow(i));
-                statement.executeUpdate();
-            } catch (SQLException exception) {
-                throw exception;
-            }
+            var statement = this.CONNECTION.prepareStatement(SQL);
+            statement.setString(1, ID);
+            statement.setInt(2, i);
+            statement.setString(3, board.getRow(i));
+            statement.executeUpdate();
         }
     }
 
-    void remove(String id) {
-
+    /**
+     * Remove the board corresponding to the given ID from the database.
+     *
+     * @param ID the ID of the board in the database
+     */
+    void remove(String ID) {
+        try {
+            removeFromDatabase(SQLRequest.DELETE_ROWS, ID);
+            removeFromDatabase(SQLRequest.DELETE_BOARD, ID);
+        } catch (SQLException e) {
+            System.err.println("* " + e.getMessage());
+        }
     }
 
-    public HashMap<String, Board> getBoards() throws SQLException {
+    /**
+     * Remove the board corresponding to the given ID, using the specified SQL request.
+     *
+     * @param SQL a string representing the request
+     * @param ID the ID of the board in the database
+     */
+    private void removeFromDatabase(final String SQL, final String ID) throws SQLException {
+        var statement = this.CONNECTION.prepareStatement(SQL);
+        statement.setString(1, ID);
+        statement.executeUpdate();
+    }
+
+    public HashMap<String, Board> getBoardList() throws SQLException {
         String SQL = SQLRequest.GET_BOARDS_INFO;
         var statement = this.CONNECTION.createStatement();
-        ResultSet boardInfo = statement.executeQuery(SQL);
-        return populatedMap(boardInfo);
+        ResultSet info = statement.executeQuery(SQL);
+        return populatedMap(info);
     }
 
-    private HashMap<String, Board> populatedMap(ResultSet boardInfo) throws SQLException {
+    private HashMap<String, Board> populatedMap(ResultSet boardInfo) throws SQLException, InvalidCharacterException {
         HashMap<String, Board> boards = new HashMap<>();
         while (boardInfo.next()) {
             String ID = boardInfo.getString("boardID");
-            String name = boardInfo.getString("name");
-            int rows = boardInfo.getInt("rows");
-            int columns = boardInfo.getInt("columns");
-            boards.put(ID, new Board(name, columns, rows));
+            boards.put(ID, getBoardWithID(ID));
         }
         return boards;
     }
 
-    //    Board get(String id) {
-    //
-    //    }
+    public Board getBoardWithID(final String ID) throws SQLException, InvalidCharacterException {
+        String SQL = SQLRequest.GET_BOARD_WITH_ID;
+        var statement = this.CONNECTION.prepareStatement(SQL);
+        statement.setString(1, ID);
+        ResultSet rows = statement.executeQuery();
+        return fillBoard(rows, "...");
+    }
+
+    private Board fillBoard(final ResultSet rows, String name) throws SQLException, InvalidCharacterException {
+        var builder = new TextBoardBuilder(name);
+        while (rows.next()) {
+            String row = rows.getString("description");
+            builder.append(row);
+        }
+        return builder.build();
+    }
 
 }

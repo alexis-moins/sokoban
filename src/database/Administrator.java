@@ -49,6 +49,7 @@ public class Administrator {
                     listBoards();
                     break;
                 case "2":
+                    showBoard();
                     break;
                 case "3":
                     addBoard();
@@ -72,19 +73,12 @@ public class Administrator {
         System.out.println("5. Quit");
     }
 
-    private void addBoard() {
-        String path = Utils.askUser("\nPath to the file containing the board : ");
-        var builder = FileBoardBuilder.deserialise(path);
-        String ID = Utils.askUser("ID associated with the board : ");
-        this.DATABASE.add(ID, builder.toTextBuilder());
-    }
-
     /**
      * Display the list of all the boards in the database.
      */
     private void listBoards() {
         try {
-            HashMap<String, Board> boards = this.DATABASE.getBoards();
+            HashMap<String, Board> boards = this.DATABASE.getBoardList();
             boards.forEach((ID, board) -> {
                 System.out.println("\n* " + ID + " (" + board.length() + 
                         "x" + board.width() + ")");
@@ -93,6 +87,27 @@ public class Administrator {
         } catch (SQLException exception) {
             System.err.println("* " + exception.getMessage());
         }
+    }
+    
+    private void showBoard() {
+        String ID = Utils.askUser("ID of the board you want to see : ");
+        try @param ID the ID of the board in the database
+            var board = this.DATABASE.getBoardWithID(ID);
+            board.draw();
+        } catch (Exception e) {
+            
+        }
+    }
+
+    private void addBoard() {
+        String path = Utils.askUser("\nPath to the file containing the board : ");
+        var builder = FileBoardBuilder.deserialise(path);
+        String ID = Utils.askUser("ID associated with the board : ");
+        this.DATABASE.add(ID, builder.toTextBuilder());
+    }
+
+    private void removeBoard() {
+        String ID = Utils.askUser("\nID of the board you want to remove : ");
     }
 
 }

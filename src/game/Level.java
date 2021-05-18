@@ -1,6 +1,5 @@
 package game;
 
-import exceptions.ElementNotFoundException;
 import java.util.Scanner;
 
 import exceptions.SokobanException;
@@ -26,12 +25,16 @@ public class Level {
      */
     private boolean isCompleted() {
         for (var target : this.BOARD.targets()) {
-            try {
-                Coordinates coord = target.coordinates();
-                BoardElement validBox = this.BOARD.findElement(coord);
-            } catch (ElementNotFoundException e) {
-                return false;
+            boolean found = false; int i = 0;
+            Coordinates coord = target.coordinates();
+            while (!found && i < this.BOARD.boxes().size()) {
+                if (this.BOARD.boxes().get(i).isAtPosition(coord))
+                    found = true;
+                i++;
             }
+
+            if (!found)
+                return false;
         } return true;
     }
 
@@ -62,7 +65,7 @@ public class Level {
     private void playMove(String move) throws SokobanException {
         var direction = Direction.correspondingTo(move);
         var coordinates = this.BOARD.player()
-                .coordinates().next(direction);
+            .coordinates().next(direction);
         try {
             var destination = this.BOARD.findElement(coordinates);
         } catch (SokobanException e) {

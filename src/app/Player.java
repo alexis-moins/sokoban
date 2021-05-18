@@ -51,7 +51,8 @@ public class Player {
         while (!finished) {
             choice = getUserInput();
             switch (choice) {
-                case "1": 
+                case "1":
+                    // select board from the database
                     break;
                 case "2":
                     manageBoards();

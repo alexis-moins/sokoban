@@ -1,9 +1,10 @@
 package game;
 
-import exceptions.ElementNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import exceptions.ElementNotFoundException;
 
 /**
  * Class representing the board.
@@ -12,16 +13,18 @@ import java.util.stream.Collectors;
  */
 public final class Board {
 
+    private final int WIDTH;
+
+    private final int LENGTH;
+
     /**
      * The name of the board / level.
      */
     private final String NAME;
 
-    private final int WIDTH;
+    private final ArrayList<Tile> TILES;
 
-    private final int LENGTH;
-
-    private final ArrayList<BoardElement> TILES;
+    private final ArrayList<Entity> ENTITIES;
 
     /**
      * Parameterised constructor creating a new board.
@@ -34,7 +37,9 @@ public final class Board {
         this.NAME = name;
         this.WIDTH = width;
         this.LENGTH = length;
+
         this.TILES = new ArrayList<>();
+        this.ENTITIES = new ArrayList<>();
     }
 
     /**
@@ -57,22 +62,22 @@ public final class Board {
     /**
      * Return the set of each and every targets present on the board.
      *
-     * @return a list of Tile objects
+     * @return an unmodifiable list of Tile objects
      */
-    List<BoardElement> targets() {
+    List<Tile> targets() {
         return this.TILES.stream()
             .filter(tile -> tile.isOfType(Type.TARGET))
             .collect(Collectors.toUnmodifiableList());
     }
 
     /**
-     * Return the set of each and every boxes present on the board.
+     * Return the list of each and every boxes present on the board.
      *
-     * @return a list of Entity objects
+     * @return an unmodifiable list of Entity objects
      */
-    List<BoardElement> boxes() {
-        return this.TILES.stream()
-            .filter(entity -> entity.isOfType(Type.BOX))
+    List<Entity> boxes() {
+        return this.ENTITIES.stream()
+            .filter(tile -> tile.isOfType(Type.BOX))
             .collect(Collectors.toUnmodifiableList());
     }
 
@@ -81,8 +86,8 @@ public final class Board {
      *
      * @return an Entity object
      */
-    BoardElement player() {
-        return this.TILES.stream()
+    Entity player() {
+        return this.ENTITIES.stream()
             .filter(entity -> entity.isOfType(Type.PLAYER))
             .findFirst().orElse(null);
     }
@@ -109,7 +114,7 @@ public final class Board {
      */
     public void addBox(int x, int y) {
         Entity box = Entity.newBox(x, y);
-        this.TILES.add(box);
+        this.ENTITIES.add(box);
     }
 
     /**
@@ -131,13 +136,13 @@ public final class Board {
      */
     public void setPlayerPosition(int x, int y) {
         Entity player = Entity.newPlayer(x, y);
-        this.TILES.add(player);
+        this.ENTITIES.add(player);
     }
 
     /**
      * Draw the board on the screen.
      */
-    void draw() {
+    public void draw() {
         displayColumnNumbers();
         for (int i = 0; i < this.WIDTH; i++) {
             System.out.print("\n" + i);
@@ -157,7 +162,24 @@ public final class Board {
     }
 
     BoardElement findElement(Coordinates coord) throws ElementNotFoundException {
+        BoardElement element;
+        try {
+            element = findEntity(coord);
+        } catch (ElementNotFoundException e) {
+            element = findTile(coord);
+        }
+        return element;
+    }
+
+    Tile findTile(Coordinates coord) throws ElementNotFoundException {
         return this.TILES.stream()
+            .filter(tile -> tile.isAtPosition(coord))
+            .findFirst().orElseThrow(() 
+                    -> new ElementNotFoundException(coord));
+    }
+
+    Entity findEntity(Coordinates coord) throws ElementNotFoundException {
+        return this.ENTITIES.stream()
             .filter(tile -> tile.isAtPosition(coord))
             .findFirst().orElseThrow(() 
                     -> new ElementNotFoundException(coord));
