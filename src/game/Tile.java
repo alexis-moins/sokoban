@@ -47,7 +47,7 @@ class Tile extends BoardElement {
      * @return a boolean.
      */
     public boolean canBeCrossed() {
-        return this.TYPE.canBeCrossed();
+        return this.TYPE.hasCollisions();
     }
 
 }

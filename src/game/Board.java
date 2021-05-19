@@ -140,6 +140,15 @@ public final class Board {
     }
 
     /**
+     * Set the player's position on the board at the given coordinates.
+     *
+     * @param coord the destination coordinates
+     */
+    public void movePlayer(Coordinates coord) {
+        player().setPosition(coord);
+    }
+
+    /**
      * Draw the board on the screen.
      */
     public void draw() {

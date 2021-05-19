@@ -42,13 +42,12 @@ class Entity extends BoardElement {
     }
 
     /**
-     * Set the entity position to the given x and y values.
+     * Set the entity position to the given coordinates.
      *
-     * @param x the x coordinate
-     * @param y the y coordinate
+     * @param coord the new position
      */
-    public void setPosition(int x, int y) {
-        this.coordinates = new Coordinates(x, y);
+    public void setPosition(Coordinates coord) {
+        this.coordinates = new Coordinates(coord.x(), coord.y());
     }
 
 }

@@ -1,8 +1,9 @@
 package game;
 
-import java.util.Scanner;
+import java.util.Arrays;
 
-import exceptions.SokobanException;
+import exceptions.PlayerLeavesException;
+import exceptions.ElementNotFoundException;
 
 /**
  * Class representing a level in the game.
@@ -23,7 +24,7 @@ public class Level {
      *
      * @return a boolean
      */
-    private boolean isCompleted() {
+    private boolean boardIsCompleted() {
         for (var target : this.BOARD.targets()) {
             boolean found = false; int i = 0;
             Coordinates coord = target.coordinates();
@@ -38,39 +39,76 @@ public class Level {
         } return true;
     }
 
-    private String getPlayerMove() {
-        Scanner scanner = new Scanner(System.in);
-        return scanner.next()
-            .trim().toUpperCase();
-    }
-
     public void start() {
-        while (!isCompleted()) {
+        boolean finished = false;
+        while (!finished) {
             this.BOARD.draw();
-            String move = getPlayerMove();
+            String move = Utils.getInput().toUpperCase();
             try {
+                tryMove(move);
                 playMove(move);
-            } catch (SokobanException e) {
-                System.err.println(e.getMessage());
+                finished = boardIsCompleted();
+            } catch (PlayerLeavesException e) {
+                System.err.println("* " + e.getMessage());
+                finished = true;
             }
         }
     }
 
     /**
-     * 
+     * Return true if the given string is considered valid on the board.
+     *
+     * @param choice the considered string
+     * @throws PlayerLeavesException the player quits the game
+     * @return a boolean
+     */
+    private boolean tryMove(String choice) throws PlayerLeavesException {
+        String[] moves = {"U", "D", "L", "R"};
+        if (Arrays.asList(moves).contains(choice))
+            return true;
+        if ("/q".equals(choice) || "/quit".equals(choice))
+            throw new PlayerLeavesException();
+        return false;
+    }
+
+    /**
+     * Play the selected move on the current board.
      *
      * @param move the user selected move
-     * @throws SokobanException the selected move is not valid
      */
-    private void playMove(String move) throws SokobanException {
+    private void playMove(final String move) {
         var direction = Direction.correspondingTo(move);
-        var coordinates = this.BOARD.player()
-            .coordinates().next(direction);
+        var coordinates = this.BOARD.player().coordinates().next(direction);
         try {
-            var destination = this.BOARD.findElement(coordinates);
-        } catch (SokobanException e) {
-            System.err.println("/!\\ Out of bound destination");
+            BoardElement destination = this.BOARD.findElement(coordinates);
+            if (destination.isOfType(Type.BOX) && crateCanBeMoved(coordinates, direction)) {
+                moveElementInDirection(coordinates, direction);
+                this.BOARD.movePlayer(coordinates);
+            }
+        } catch (ElementNotFoundException e) {
+            this.BOARD.movePlayer(coordinates);
         }
+    }
+
+    private boolean crateCanBeMoved(final Coordinates coord, final Direction dir) {
+        try {
+            var newCoord = coord.next(dir);
+            var element = this.BOARD.findElement(coord);
+            if (element.isOfType(Type.BOX))
+                return crateCanBeMoved(newCoord, dir);
+            return element.hasCollisions();
+        } catch (ElementNotFoundException e) {
+            return true;
+        }
+    }
+
+    private void moveElementInDirection(final Coordinates coord, final Direction dir) {
+        try {
+            var newCoord = coord.next(dir);
+            var element = this.BOARD.findEntity(coord);
+            moveElementInDirection(newCoord, dir);
+            element.setPosition(newCoord.next(dir));
+        } catch (ElementNotFoundException e) {}
     }
 
 }

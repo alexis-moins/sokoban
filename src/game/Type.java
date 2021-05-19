@@ -38,7 +38,7 @@ enum Type {
      *
      * @return a boolean
      */
-    public boolean canBeCrossed() {
+    public boolean hasCollisions() {
         switch (this) {
             case BOX:
                 return false;

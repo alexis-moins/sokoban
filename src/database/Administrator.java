@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import game.Board;
 import game.Utils;
 import builder.FileBoardBuilder;
+import exceptions.InvalidCharacterException;
 
 
 /**
@@ -54,6 +55,9 @@ public class Administrator {
                 case "3":
                     addBoard();
                     break;
+                case "4":
+                    removeBoard();
+                    break;
                 case "5":
                     finished = true;
                     break;
@@ -78,24 +82,27 @@ public class Administrator {
      */
     private void listBoards() {
         try {
-            HashMap<String, Board> boards = this.DATABASE.getBoardList();
-            boards.forEach((ID, board) -> {
-                System.out.println("\n* " + ID + " (" + board.length() + 
-                        "x" + board.width() + ")");
-                System.out.println(board.name());
-            });
-        } catch (SQLException exception) {
-            System.err.println("* " + exception.getMessage());
+            HashMap<String, Board> boards = this.DATABASE.getListOfBoards();
+            if (boards.size() == 0)
+                System.err.println("No board in the database");
+            else {
+                boards.forEach((ID, board) -> {
+                    System.out.println("\n* " + ID + " (" + board.length() + "x" + board.width() + ")");
+                    System.out.println(board.name()); });
+            }
+        } catch (SQLException | InvalidCharacterException e) {
+            System.err.println("* " + e.getMessage());
         }
     }
-    
+
     private void showBoard() {
-        String ID = Utils.askUser("ID of the board you want to see : ");
-        try @param ID the ID of the board in the database
+        String ID = Utils.askUser("\nID of the board you want to see : ");
+        try {
             var board = this.DATABASE.getBoardWithID(ID);
+            System.out.println();
             board.draw();
         } catch (Exception e) {
-            
+            System.err.println("* " + e.getMessage());
         }
     }
 
@@ -108,6 +115,23 @@ public class Administrator {
 
     private void removeBoard() {
         String ID = Utils.askUser("\nID of the board you want to remove : ");
+        this.DATABASE.remove(ID);
+    }
+
+    public Board selectBoard() throws SQLException, InvalidCharacterException {
+        listBoards();
+        String ID = Utils.askUser("\nSelect the ID of the board you want to solve : ");
+        return this.DATABASE.getBoardWithID(ID);
+    }
+
+    public boolean IDIsValid(String ID) {
+        try {
+            var IDs = this.DATABASE.getValidIDs();
+            return IDs.contains(ID);
+        } catch (SQLException e) {
+            System.err.println("* " + e.getMessage());
+            return false;
+        }
     }
 
 }

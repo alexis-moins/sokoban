@@ -66,4 +66,13 @@ abstract class BoardElement {
         return this.coordinates.equals(coord);
     }
 
+    /**
+     * Return true if the element has collisions on the board.
+     *
+     * @return a boolean
+     */
+    public boolean hasCollisions() {
+        return this.TYPE.hasCollisions();
+    }
+
 }

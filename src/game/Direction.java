@@ -50,7 +50,7 @@ public enum Direction {
         return direction;
     }
 
-    static Direction correspondingTo(String move) throws InvalidDirectionException {
+    static Direction correspondingTo(String move) {
         Direction direction = null;
         switch (move) {
             case "U":
@@ -65,8 +65,6 @@ public enum Direction {
             case "L":
                 direction = Direction.WEST;
                 break;
-            default:
-                throw new InvalidDirectionException(move);
         }
         return direction;
     }
