@@ -40,7 +40,7 @@ public class FileBoardBuilder implements BoardBuilder {
         return builder;
     }
 
-    public TextBoardBuilder toTextBuilder() {
+    public TextBoardBuilder convertToTextBuilder() {
         var builder = new TextBoardBuilder(this.BOARD.get(0));
         for (int i = 1; i < this.BOARD.size(); i++) {
             builder.append(this.BOARD.get(i));
@@ -56,7 +56,7 @@ public class FileBoardBuilder implements BoardBuilder {
      */
     @Override
     public Board build() throws InvalidCharacterException {
-        var builder = toTextBuilder();
+        var builder = convertToTextBuilder();
         return builder.build();
     }
 

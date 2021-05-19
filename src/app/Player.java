@@ -1,12 +1,10 @@
 package app;
 
-import java.util.Scanner;
 import java.sql.SQLException;
 
 import game.Utils;
 import game.Level;
 import database.Administrator;
-import builder.FileBoardBuilder;
 import exceptions.InvalidCharacterException;
 
 /**
@@ -55,6 +53,7 @@ public class Player {
             switch (choice) {
                 case "1":
                     selectBoard(admin);
+                    displayMainMenu();
                     break;
                 case "2":
                     admin.menu();
@@ -64,7 +63,7 @@ public class Player {
                     finished = true;
                     break;
                 default:
-                    System.err.println("Invalid choice");
+                    System.err.println("Invalid choice\n");
                     break;
             }
         }

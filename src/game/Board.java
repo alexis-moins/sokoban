@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import exceptions.ElementNotFoundException;
-
 /**
  * Class representing the board.
  *
@@ -156,44 +154,17 @@ public final class Board {
         for (int i = 0; i < this.WIDTH; i++) {
             System.out.print("\n" + i);
             for (int j = 0; j < this.LENGTH; j++) {
-                char character;
+                char character = '.';
                 var coord = new Coordinates(j, i);
-                try {
-                    BoardElement element = findElement(coord);
+                BoardElement element = findElement(coord);
+                if (element != null)
                     character = element.character();
-                } catch (ElementNotFoundException e) {
-                    character = '.';
-                }
                 System.out.print(" " + character);
             }
         }
         System.out.print("\n");
     }
-
-    BoardElement findElement(Coordinates coord) throws ElementNotFoundException {
-        BoardElement element;
-        try {
-            element = findEntity(coord);
-        } catch (ElementNotFoundException e) {
-            element = findTile(coord);
-        }
-        return element;
-    }
-
-    Tile findTile(Coordinates coord) throws ElementNotFoundException {
-        return this.TILES.stream()
-            .filter(tile -> tile.isAtPosition(coord))
-            .findFirst().orElseThrow(() 
-                    -> new ElementNotFoundException(coord));
-    }
-
-    Entity findEntity(Coordinates coord) throws ElementNotFoundException {
-        return this.ENTITIES.stream()
-            .filter(tile -> tile.isAtPosition(coord))
-            .findFirst().orElseThrow(() 
-                    -> new ElementNotFoundException(coord));
-    }
-
+    
     /**
      * Display the column numbers on the board.
      */
@@ -202,5 +173,27 @@ public final class Board {
         for (int i = 0; i < this.LENGTH; i++) {
             System.out.print(" " + i);
         }
+        System.out.println();
     }
+
+    BoardElement findElement(Coordinates coord) {
+        BoardElement element;
+        element = findEntity(coord);
+        if (element == null)
+            element = findTile(coord);
+        return element;
+    }
+
+    Tile findTile(Coordinates coord) {
+        return this.TILES.stream()
+            .filter(tile -> tile.isAtPosition(coord))
+            .findFirst().orElse(null);
+    }
+
+    Entity findEntity(Coordinates coord) {
+        return this.ENTITIES.stream()
+            .filter(tile -> tile.isAtPosition(coord))
+            .findFirst().orElse(null);
+    }
+    
 }

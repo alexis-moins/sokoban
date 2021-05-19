@@ -110,7 +110,7 @@ public class Administrator {
         String path = Utils.askUser("\nPath to the file containing the board : ");
         var builder = FileBoardBuilder.deserialise(path);
         String ID = Utils.askUser("ID associated with the board : ");
-        this.DATABASE.add(ID, builder.toTextBuilder());
+        this.DATABASE.add(ID, builder.convertToTextBuilder());
     }
 
     private void removeBoard() {

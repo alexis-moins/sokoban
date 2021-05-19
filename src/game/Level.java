@@ -1,9 +1,6 @@
 package game;
 
-import java.util.Arrays;
-
 import exceptions.PlayerLeavesException;
-import exceptions.ElementNotFoundException;
 
 /**
  * Class representing a level in the game.
@@ -13,6 +10,8 @@ import exceptions.ElementNotFoundException;
 public class Level {
 
     private final Board BOARD;
+    
+    private static final char[] expectedMoves = {'U', 'D', 'L', 'R'};
 
     public Level(Board board) {
         this.BOARD = board;
@@ -47,7 +46,11 @@ public class Level {
             try {
                 tryMove(move);
                 playMove(move);
-                finished = boardIsCompleted();
+                if (boardIsCompleted()) {
+                    this.BOARD.draw();
+                    System.out.println("\nLe niveau est terminé, félicitations !");
+                    finished = true;
+                }
             } catch (PlayerLeavesException e) {
                 System.err.println("* " + e.getMessage());
                 finished = true;
@@ -62,12 +65,23 @@ public class Level {
      * @throws PlayerLeavesException the player quits the game
      * @return a boolean
      */
-    private boolean tryMove(String choice) throws PlayerLeavesException {
-        String[] moves = {"U", "D", "L", "R"};
-        if (Arrays.asList(moves).contains(choice))
-            return true;
+    private boolean tryMove(final String choice) throws PlayerLeavesException {
         if ("/q".equals(choice) || "/quit".equals(choice))
-            throw new PlayerLeavesException();
+                throw new PlayerLeavesException();
+
+        boolean choiceIsValid = true; int i = 0;
+        char[] choices = choice.toCharArray();
+        while (choiceIsValid && i < choices.length) {
+            if (choices[i])
+        }
+        return choiceIsValid;
+    }
+    
+    private boolean moveIsValid(char move) {
+        for () {
+            if (move == )
+                return true;
+        }
         return false;
     }
 
@@ -77,38 +91,36 @@ public class Level {
      * @param move the user selected move
      */
     private void playMove(final String move) {
-        var direction = Direction.correspondingTo(move);
-        var coordinates = this.BOARD.player().coordinates().next(direction);
-        try {
-            BoardElement destination = this.BOARD.findElement(coordinates);
-            if (destination.isOfType(Type.BOX) && crateCanBeMoved(coordinates, direction)) {
-                moveElementInDirection(coordinates, direction);
-                this.BOARD.movePlayer(coordinates);
-            }
-        } catch (ElementNotFoundException e) {
+        Direction direction = Direction.correspondingTo(move);
+        Coordinates coordinates = this.BOARD.player().coordinates().next(direction);
+        BoardElement destination = this.BOARD.findElement(coordinates);
+        if (destination == null) {
+            this.BOARD.movePlayer(coordinates);
+        } else if (destination.isOfType(Type.BOX) && boxCanBeMoved(coordinates, direction)) {
+            moveElementInDirection(coordinates, direction);
             this.BOARD.movePlayer(coordinates);
         }
     }
 
-    private boolean crateCanBeMoved(final Coordinates coord, final Direction dir) {
-        try {
-            var newCoord = coord.next(dir);
-            var element = this.BOARD.findElement(coord);
-            if (element.isOfType(Type.BOX))
-                return crateCanBeMoved(newCoord, dir);
-            return element.hasCollisions();
-        } catch (ElementNotFoundException e) {
+    private boolean boxCanBeMoved(final Coordinates coord, final Direction dir) {
+        Coordinates newCoord = coord.next(dir);
+        BoardElement element = this.BOARD.findElement(coord);
+        if (element == null)
             return true;
-        }
+        else if (element.isOfType(Type.BOX))
+            return boxCanBeMoved(newCoord, dir);
+        return element.hasCollisions();
     }
 
     private void moveElementInDirection(final Coordinates coord, final Direction dir) {
-        try {
-            var newCoord = coord.next(dir);
-            var element = this.BOARD.findEntity(coord);
+        Coordinates newCoord = coord.next(dir);
+        Entity entity = this.BOARD.findEntity(newCoord);
+        if (entity != null) {
             moveElementInDirection(newCoord, dir);
-            element.setPosition(newCoord.next(dir));
-        } catch (ElementNotFoundException e) {}
+            entity.setPosition(newCoord.next(dir));
+        } else {
+            this.BOARD.findEntity(coord).setPosition(newCoord);
+        }
     }
 
 }

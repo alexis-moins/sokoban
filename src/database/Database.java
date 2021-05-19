@@ -1,6 +1,9 @@
 package database;
 
+import java.util.List;
 import java.util.HashMap;
+import java.util.ArrayList;
+
 import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,8 +12,6 @@ import java.sql.DriverManager;
 import game.Board;
 import builder.TextBoardBuilder;
 import exceptions.InvalidCharacterException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representing a database with an open connection.
@@ -51,11 +52,20 @@ class Database {
      * @return a new Database object
      */
     static Database newConnection(String path) throws SQLException {
+        loadDriver();
         Connection connection = DriverManager.getConnection(URL + path);
         var statement = connection.createStatement();
         statement.execute(SQLRequest.CREATE_TABLE_BOARDS);
         statement.execute(SQLRequest.CREATE_TABLE_ROWS);
         return new Database(connection);
+    }
+    
+    private static void loadDriver() {
+        try {
+            Class.forName(DRIVER);
+        } catch (ClassNotFoundException e) {
+            System.err.println("* " + e.getMessage());
+        }
     }
 
     /**

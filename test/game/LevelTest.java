@@ -1,24 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import builder.FileBoardBuilder;
+import exceptions.InvalidCharacterException;
+
 /**
  *
- * @author alexis
+ * @author Alexis Moins
  */
 public class LevelTest {
     
-    public LevelTest() {
-    }
-
     @Test
-    public void testSomeMethod() {
+    public void boxCanBeMoved() {
+        FileBoardBuilder builder = FileBoardBuilder
+                .deserialise("data/boards/test1.txt");
+        try {
+            
+        } catch (InvalidCharacterException e) {
+            assertTrue(false);
+        }
     }
     
 }
