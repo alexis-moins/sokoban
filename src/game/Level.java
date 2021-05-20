@@ -9,10 +9,21 @@ import exceptions.PlayerLeavesException;
  */
 public class Level {
 
+    /**
+     * The playable board of the level.
+     */
     private final Board BOARD;
-    
+
+    /**
+     * The array of valid moves the player can perform on the board.
+     */
     private static final char[] expectedMoves = {'U', 'D', 'L', 'R'};
 
+    /**
+     * Parameterised constructor creating a new Level object.
+     *
+     * @param board the board of the level
+     */
     public Level(Board board) {
         this.BOARD = board;
     }
@@ -41,14 +52,15 @@ public class Level {
     public void start() {
         boolean finished = false;
         while (!finished) {
+            Utils.clearScreen();
             this.BOARD.draw();
-            String move = Utils.getInput().toUpperCase();
+            String move = Utils.askUser("\nWhat do you want to do : ").toUpperCase();
             try {
                 tryMove(move);
                 playMove(move);
                 if (boardIsCompleted()) {
                     this.BOARD.draw();
-                    System.out.println("\nLe niveau est terminé, félicitations !");
+                    System.out.println("\nYou completed the board, congratulations !");
                     finished = true;
                 }
             } catch (PlayerLeavesException e) {
@@ -59,27 +71,30 @@ public class Level {
     }
 
     /**
-     * Return true if the given string is considered valid on the board.
+     * Return true if the given string is considered a valid (series of) play on the board.
      *
      * @param choice the considered string
      * @throws PlayerLeavesException the player quits the game
      * @return a boolean
      */
     private boolean tryMove(final String choice) throws PlayerLeavesException {
-        if ("/q".equals(choice) || "/quit".equals(choice))
-                throw new PlayerLeavesException();
+        if ("/Q".equals(choice) || "/QUIT".equals(choice))
+            throw new PlayerLeavesException();
 
-        boolean choiceIsValid = true; int i = 0;
+        int i = 0;
+        boolean isValid  = true; 
         char[] choices = choice.toCharArray();
-        while (choiceIsValid && i < choices.length) {
-            if (choices[i])
+        while (isValid && i < choices.length) {
+            if (!moveIsValid(choices[i]))
+                isValid = false;
+            i++;
         }
-        return choiceIsValid;
+        return isValid;
     }
-    
-    private boolean moveIsValid(char move) {
-        for () {
-            if (move == )
+
+    private boolean moveIsValid(char choice) {
+        for (char move : expectedMoves) {
+            if (move == choice)
                 return true;
         }
         return false;
@@ -91,16 +106,26 @@ public class Level {
      * @param move the user selected move
      */
     private void playMove(final String move) {
-        Direction direction = Direction.correspondingTo(move);
-        Coordinates coordinates = this.BOARD.player().coordinates().next(direction);
-        BoardElement destination = this.BOARD.findElement(coordinates);
-        if (destination == null) {
-            this.BOARD.movePlayer(coordinates);
-        } else if (destination.isOfType(Type.BOX) && boxCanBeMoved(coordinates, direction)) {
-            moveElementInDirection(coordinates, direction);
-            this.BOARD.movePlayer(coordinates);
+        Utils.clearScreen();
+        for (char m : move.toCharArray()) {
+            String c = String.valueOf(m);
+            playSingleMove(c);
+            Utils.clearScreen();
         }
     }
+
+    private void playSingleMove(final String move) {
+        Direction dir = Direction.correspondingTo(move);
+        Coordinates coord = this.BOARD.player().coordinates().next(dir);
+        BoardElement destination = this.BOARD.findElement(coord);
+        if (destination == null || destination.isOfType(Type.TARGET)) {
+            this.BOARD.movePlayer(coord);
+        } else if (destination.isOfType(Type.BOX) && boxCanBeMoved(coord, dir)) {
+            moveElementInDirection(coord, dir);
+            this.BOARD.movePlayer(coord);
+        }
+    }
+
 
     private boolean boxCanBeMoved(final Coordinates coord, final Direction dir) {
         Coordinates newCoord = coord.next(dir);

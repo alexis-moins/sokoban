@@ -1,11 +1,10 @@
 package builder;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import game.Board;
 import exceptions.InvalidCharacterException;
+import game.Coordinates;
 
 /**
  * Class creating a board from strings.
@@ -87,7 +86,7 @@ public class TextBoardBuilder implements BoardBuilder {
      *
      * @param row a string to be added
      */
-    public void append(String row) {
+    public void append(final String row) {
         this.ROWS.add(row);
         this.WIDTH++;
         if (this.LENGTH == 0)
@@ -97,7 +96,7 @@ public class TextBoardBuilder implements BoardBuilder {
     /**
      * Return a board created with the current builder informations.
      *
-     * @return a board object
+     * @return a Board object
      * @throws InvalidCharacterException an invalid character prevents the 
      * board from being built
      */
@@ -119,23 +118,24 @@ public class TextBoardBuilder implements BoardBuilder {
      * @param board the board of the game
      */
     private void deserialise(String row, int y, Board board) throws InvalidCharacterException {
-        var tiles = row.split("");
+        char[] tiles = row.toCharArray();
         for (int x = 0; x < tiles.length; x++) {
-            var tile = tiles[x];
+            char tile = tiles[x];
             switch (tile) {
-                case "P":
-                    board.setPlayerPosition(x, y);
+                case 'P':
+                    Coordinates coord = new Coordinates(x, y);
+                    board.movePlayer(coord);
                     break;
-                case "#":
+                case '#':
                     board.addVerticalWall(x, y, 1);
                     break;
-                case "x":
+                case 'x':
                     board.addTarget(x, y);
                     break;
-                case "C":
+                case 'C':
                     board.addBox(x, y);
                     break;
-                case ".":
+                case '.':
                     break;
                 default:
                     throw new InvalidCharacterException(tile);

@@ -14,7 +14,7 @@ import exceptions.InvalidCharacterException;
  *
  * @author Alexis Moins
  */
-public class FileBoardBuilder implements BoardBuilder {
+public final class FileBoardBuilder implements BoardBuilder {
 
     private final ArrayList<String> BOARD;
 
@@ -31,13 +31,13 @@ public class FileBoardBuilder implements BoardBuilder {
     public static FileBoardBuilder deserialise(String path) {
         var builder = new FileBoardBuilder();
         try (Scanner scanner = new Scanner(new File(path))) {
-            while (scanner.hasNextLine()) {
+            while (scanner.hasNextLine())
                 builder.BOARD.add(scanner.nextLine());
-            }
+            return builder;
         } catch (FileNotFoundException ex) {
             System.err.println("Unable to open file under " + path);
+            return null;
         }
-        return builder;
     }
 
     public TextBoardBuilder convertToTextBuilder() {
@@ -49,14 +49,15 @@ public class FileBoardBuilder implements BoardBuilder {
     }
 
     /**
-     * Create and return a board created with the current builder.
+     * Return a board created with the current builder informations.
      *
-     * @return a builder object
-     * @throws InvalidCharacterException the builder couldn't be built
+     * @return a Board object
+     * @throws InvalidCharacterException an invalid character prevents the 
+     * board from being built
      */
     @Override
     public Board build() throws InvalidCharacterException {
-        var builder = convertToTextBuilder();
+        TextBoardBuilder builder = convertToTextBuilder();
         return builder.build();
     }
 

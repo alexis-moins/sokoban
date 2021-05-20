@@ -1,7 +1,7 @@
 package builder;
 
 import game.Board;
-import exceptions.SokobanException;
+import exceptions.InvalidCharacterException;
 
 /**
  * Interface listing the behaviour for builder classes.
@@ -10,6 +10,13 @@ import exceptions.SokobanException;
  */
 interface BoardBuilder {
 
-    Board build() throws SokobanException;
+    /**
+     * Return a board created with the current builder informations.
+     *
+     * @return a Board object
+     * @throws InvalidCharacterException an invalid character prevents the 
+     * board from being built
+     */
+    Board build() throws InvalidCharacterException;
 
 }

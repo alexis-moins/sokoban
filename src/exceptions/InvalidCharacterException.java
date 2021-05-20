@@ -13,7 +13,7 @@ public class InvalidCharacterException extends SokobanException {
      * 
      * @param character the invalid character.
      */
-    public InvalidCharacterException(String character) {
+    public InvalidCharacterException(char character) {
         super("Unable to build board : invalid character '" + character + 
                 "' found");
     }

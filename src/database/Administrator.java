@@ -1,5 +1,6 @@
 package database;
 
+import java.util.List;
 import java.util.HashMap;
 import java.sql.SQLException;
 
@@ -8,13 +9,12 @@ import game.Utils;
 import builder.FileBoardBuilder;
 import exceptions.InvalidCharacterException;
 
-
 /**
  * Class representing the administrator for the database.
  *
  * @author Alexis Moins
  */
-public class Administrator {
+public final class Administrator {
 
     private final Database DATABASE;
 
@@ -31,12 +31,12 @@ public class Administrator {
      * Return a new Administrator object with a valid connection to the
      * database.
      *
-     * @param path the path leading to the database`
-     * @throws SQLException TODO
+     * @param path the path leading to the database
+     * @throws SQLException there was a problem in the database creation
      * @return an Administrator object
      */
     public static Administrator manageDatabase(String path) throws SQLException {
-        var database = Database.newConnection(path);
+        Database database = Database.newConnection(path);
         return new Administrator(database);
     }
 
@@ -83,13 +83,11 @@ public class Administrator {
     private void listBoards() {
         try {
             HashMap<String, Board> boards = this.DATABASE.getListOfBoards();
-            if (boards.size() == 0)
+            if (boards.isEmpty())
                 System.err.println("No board in the database");
-            else {
-                boards.forEach((ID, board) -> {
-                    System.out.println("\n* " + ID + " (" + board.length() + "x" + board.width() + ")");
-                    System.out.println(board.name()); });
-            }
+            else
+                boards.forEach((ID, board) -> 
+                        System.out.println("\n* " + ID + " " + board));
         } catch (SQLException | InvalidCharacterException e) {
             System.err.println("* " + e.getMessage());
         }
@@ -97,36 +95,55 @@ public class Administrator {
 
     private void showBoard() {
         String ID = Utils.askUser("\nID of the board you want to see : ");
+        if (!IDIsValid(ID)) {
+            System.err.println("* No boards were found with that ID");
+            return;
+        }
+
         try {
-            var board = this.DATABASE.getBoardWithID(ID);
+            Board board = this.DATABASE.getBoardWithID(ID);
             System.out.println();
             board.draw();
-        } catch (Exception e) {
+        } catch (InvalidCharacterException | SQLException e) {
             System.err.println("* " + e.getMessage());
         }
     }
 
     private void addBoard() {
         String path = Utils.askUser("\nPath to the file containing the board : ");
-        var builder = FileBoardBuilder.deserialise(path);
+        FileBoardBuilder builder = FileBoardBuilder.deserialise(path);
+        if (builder == null)
+            return;
         String ID = Utils.askUser("ID associated with the board : ");
         this.DATABASE.add(ID, builder.convertToTextBuilder());
     }
 
     private void removeBoard() {
         String ID = Utils.askUser("\nID of the board you want to remove : ");
+        if (!IDIsValid(ID)) {
+            System.err.println("* No boards were found with that ID");
+            return;
+        } 
         this.DATABASE.remove(ID);
     }
 
-    public Board selectBoard() throws SQLException, InvalidCharacterException {
+    public Board selectBoard() {
         listBoards();
         String ID = Utils.askUser("\nSelect the ID of the board you want to solve : ");
+        if (!IDIsValid(ID))
+            return null;
         return this.DATABASE.getBoardWithID(ID);
     }
 
+    /**
+     * Return true if the given ID is present in the database.
+     * 
+     * @param ID the considered ID
+     * @return a boolean
+     */
     public boolean IDIsValid(String ID) {
         try {
-            var IDs = this.DATABASE.getValidIDs();
+            List<String> IDs = this.DATABASE.getListOfValidIDs();
             return IDs.contains(ID);
         } catch (SQLException e) {
             System.err.println("* " + e.getMessage());

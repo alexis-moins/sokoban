@@ -6,7 +6,7 @@ package game;
  *
  * @author Alexis Moins
  */
-class Tile extends BoardElement {
+final class Tile extends BoardElement {
 
     /**
      * Parameterised constructor creating a new Tile object.
@@ -39,15 +39,6 @@ class Tile extends BoardElement {
      */
     public static Tile newTarget(int x, int y) {
         return new Tile(x, y, Type.TARGET);
-    }
-
-    /**
-     * Return true if the tile can be crossed by entities.
-     *
-     * @return a boolean.
-     */
-    public boolean canBeCrossed() {
-        return this.TYPE.hasCollisions();
     }
 
 }

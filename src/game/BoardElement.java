@@ -24,7 +24,7 @@ abstract class BoardElement {
      * @param y the position on the y axis
      * @param type the type of the element
      */
-    BoardElement(int x, int y, Type type) {
+    BoardElement(final int x, final int y, final Type type) {
         this.TYPE = type;
         this.coordinates = new Coordinates(x, y);
     }
@@ -35,7 +35,7 @@ abstract class BoardElement {
      * @return a character
      */
     public char character() {
-        return this.TYPE.toChar();
+        return this.TYPE.character();
     }
 
     /**
@@ -53,7 +53,7 @@ abstract class BoardElement {
      * @param type the type compared to
      * @return a boolean
      */
-    public boolean isOfType(Type type) {
+    public boolean isOfType(final Type type) {
         return this.TYPE == type;
     }
 
@@ -62,7 +62,7 @@ abstract class BoardElement {
      *
      * @return a boolean
      */
-    public boolean isAtPosition(Coordinates coord) {
+    public boolean isAtPosition(final Coordinates coord) {
         return this.coordinates.equals(coord);
     }
 

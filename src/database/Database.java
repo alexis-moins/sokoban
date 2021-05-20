@@ -116,15 +116,13 @@ class Database {
         }
     }
 
-    public List<String> getValidIDs() throws SQLException {
+    public List<String> getListOfValidIDs() throws SQLException {
         String SQL = SQLRequest.GET_LIST_OF_ID;
         var statement = this.CONNECTION.createStatement();
         var IDs = statement.executeQuery(SQL);
         var IDList = new ArrayList<String>();
-        while (IDs.next()) {
-            String ID = IDs.getString("boardID");
-            IDList.add(ID);
-        }
+        while (IDs.next())
+            IDList.add(IDs.getString("boardID"));
         return IDList;
     }
 
@@ -180,12 +178,14 @@ class Database {
      * @param name the name of the board
      * @return a Board object
      */
-    public Board getBoardWithID(final String ID, final String name) throws SQLException, InvalidCharacterException {
-        String SQL = SQLRequest.GET_BOARD_WITH_ID;
-        var statement = this.CONNECTION.prepareStatement(SQL);
-        statement.setString(1, ID);
-        ResultSet info = statement.executeQuery();
-        return buildBoard(info, name);
+    public Board getBoardWithID(final String ID, final String name) {
+            String SQL = SQLRequest.GET_BOARD_WITH_ID;
+        try {
+            var statement = this.CONNECTION.prepareStatement(SQL);
+            statement.setString(1, ID);
+            ResultSet info = statement.executeQuery();
+            return buildBoard(info, name);
+        } catch (InvalidCharacterException | SQLException e) { return null; }
     }
 
     /**
@@ -194,12 +194,12 @@ class Database {
      * @param ID the ID of the considered board
      * @return a Board object
      */
-    public Board getBoardWithID(final String ID) throws SQLException, InvalidCharacterException {
+    public Board getBoardWithID(final String ID) {
         return getBoardWithID(ID, "...");
     }
 
     /**
-     * Return a board build with the informations retrieved from the given SQL
+     * Return a board built with the informations retrieved from the given SQL
      * ResultSet.
      *
      * @param rows the result of the SQL request

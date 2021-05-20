@@ -5,12 +5,48 @@ package game;
  *
  * @author Alexis Moins
  */
-enum Type {
+public enum Type {
 
-    BOX,
-    WALL,
-    PLAYER,
-    TARGET;
+    /**
+     * The type representing a box.
+     */
+    BOX('C', true),
+
+    /**
+     * The type representing a wall.
+     */
+    WALL('#', true),
+
+    /**
+     * The type representing a player.
+     */
+    PLAYER('P', false),
+
+    /**
+     * The type representing a target.
+     */
+    TARGET('x', false);
+
+    /**
+     * The character associated with the Type.
+     */
+    private final char CHARACTER;
+
+    /**
+     * Wether the type allows collisions or not.
+     */
+    private final boolean HAS_COLLISIONS;
+
+    /**
+     * Parametorised constructor creating a new Type object.
+     * 
+     * @param character the character representing the type on the board
+     * @param collisions wether the considered type has collisions
+     */
+    private Type(final char character, final boolean collisions) {
+        this.CHARACTER = character;
+        this.HAS_COLLISIONS = collisions;
+    }
 
     /**
      * Return the character representing visually the element of the
@@ -18,18 +54,8 @@ enum Type {
      *
      * @return a character
      */
-    public char toChar() {
-        switch (this) {
-            case BOX:
-                return 'C';
-            case WALL:
-                return '#';
-            case PLAYER:
-                return 'P';
-            case TARGET:
-                return 'x';
-        }
-        return '!';
+    public char character() {
+        return this.CHARACTER;
     }
     
     /**
@@ -39,17 +65,7 @@ enum Type {
      * @return a boolean
      */
     public boolean hasCollisions() {
-        switch (this) {
-            case BOX:
-                return false;
-            case WALL:
-                return false;
-            case PLAYER:
-                return true;
-            case TARGET:
-                return true;
-        }
-        return false;
+        return this.HAS_COLLISIONS;
     }
 
 }

@@ -2,17 +2,17 @@ package app;
 
 import java.sql.SQLException;
 
+import game.Board;
 import game.Utils;
 import game.Level;
 import database.Administrator;
-import exceptions.InvalidCharacterException;
 
 /**
  * Class used as the main interface with the player.
  *
  * @author Alexis Moins
  */
-public class Player {
+public final class Player {
 
     /**
      * The path to the database of the game.
@@ -76,13 +76,13 @@ public class Player {
      * @param admin an Administrator object
      */
     private static void selectBoard(Administrator admin) {
-        try {
-            var board = admin.selectBoard();
-            var level = new Level(board);
-            level.start();
-        } catch (SQLException | InvalidCharacterException e) {
-            System.err.println("* " + e.getMessage());
-        }
+        Board board = admin.selectBoard();
+        if (board == null) {
+            System.err.println("* No boards were found with that ID");
+            return;
+        }    
+        Level level = new Level(board);
+        level.start();
     }
 
 }
