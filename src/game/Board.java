@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import elements.Tile;
+import elements.Entity;
+import elements.BoardElement;
+
+import utils.Type;
+import utils.Coordinates;
+
 /**
  * Class representing the board.
  *
@@ -26,7 +33,7 @@ public final class Board {
      * The name of the board.
      */
     private final String NAME;
-    
+
     /**
      * The player.
      */
@@ -38,7 +45,7 @@ public final class Board {
     private final ArrayList<Tile> TILES;
 
     /**
-     * The list of the entities (the player and the boxes) on the board.
+     * The list of the entities (the boxes) on the board.
      */
     private final ArrayList<Entity> ENTITIES;
 
@@ -76,7 +83,7 @@ public final class Board {
     public int length() {
         return this.LENGTH;
     }
-    
+
     /**
      * Return the width of the board.
      * 
@@ -85,7 +92,7 @@ public final class Board {
     public int width() {
         return this.WIDTH;
     }
-    
+
     /**
      * Return the player.
      *
@@ -122,7 +129,7 @@ public final class Board {
      * @param y the y coordinate
      * @param size the size of the wall
      */
-    public void addVerticalWall(int x, int y, int size) {
+    public void addVerticalWall(final int x, final int y, final int size) {
         for (int i = y; i < y + size; i++) {
             Tile wall = Tile.newWall(x, y);
             this.TILES.add(wall);
@@ -135,7 +142,7 @@ public final class Board {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    public void addBox(int x, int y) {
+    public void addBox(final int x, final int y) {
         Entity box = Entity.newBox(x, y);
         this.ENTITIES.add(box);
     }
@@ -146,7 +153,7 @@ public final class Board {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    public void addTarget(int x, int y) {
+    public void addTarget(final int x, final int y) {
         Tile target = Tile.newTarget(x, y);
         this.TILES.add(target);
     }
@@ -156,7 +163,7 @@ public final class Board {
      *
      * @param coord the destination coordinates
      */
-    public void movePlayer(Coordinates coord) {
+    public void movePlayer(final Coordinates coord) {
         this.PLAYER.setPosition(coord);
     }
 
@@ -168,11 +175,8 @@ public final class Board {
         for (int i = 0; i < this.WIDTH; i++) {
             System.out.print("\n" + i);
             for (int j = 0; j < this.LENGTH; j++) {
-                char character = '.';
                 Coordinates coord = new Coordinates(j, i);
-                BoardElement element = findElement(coord);
-                if (element != null)
-                    character = element.character();
+                char character = getElementCharacter(coord);
                 System.out.print(" " + character);
             }
         }
@@ -188,6 +192,15 @@ public final class Board {
         for (int i = 0; i < this.LENGTH; i++) {
             System.out.print(" " + i);
         }
+    }
+
+    private char getElementCharacter(final Coordinates coord) {
+        if (this.PLAYER.isAtPosition(coord))
+            return this.PLAYER.character();
+        BoardElement element = findElement(coord);
+        if (element != null)
+            return element.character();
+        return '.';
     }
 
     /**
@@ -238,7 +251,7 @@ public final class Board {
      */
     @Override
     public String toString() {
-        return "(" + this.LENGTH + "x" + this.WIDTH + ")\n " + this.NAME;
+        return "(" + this.LENGTH + "x" + this.WIDTH + ")\n" + this.NAME;
     }
 
 }

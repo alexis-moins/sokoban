@@ -1,6 +1,14 @@
 package game;
 
+import elements.Entity;
+import elements.BoardElement;
+import utils.Direction;
+import utils.Type;
+import utils.Utils;
+import utils.Coordinates;
+
 import exceptions.PlayerLeavesException;
+import exceptions.InvalidDirectionException;
 
 /**
  * Class representing a level in the game.
@@ -15,9 +23,14 @@ public class Level {
     private final Board BOARD;
 
     /**
+     * True if the board of the level is completed.
+     */
+    private boolean isFinished;
+
+    /**
      * The array of valid moves the player can perform on the board.
      */
-    private static final char[] expectedMoves = {'U', 'D', 'L', 'R'};
+    private static final char[] expectedMoves = {'u', 'd', 'l', 'r'};
 
     /**
      * Parameterised constructor creating a new Level object.
@@ -26,6 +39,7 @@ public class Level {
      */
     public Level(Board board) {
         this.BOARD = board;
+        this.isFinished = false;
     }
 
     /**
@@ -50,24 +64,33 @@ public class Level {
     }
 
     public void start() {
-        boolean finished = false;
-        while (!finished) {
+        while (!isFinished) {
             Utils.clearScreen();
             this.BOARD.draw();
-            String move = Utils.askUser("\nWhat do you want to do : ").toUpperCase();
-            try {
-                tryMove(move);
-                playMove(move);
-                if (boardIsCompleted()) {
-                    this.BOARD.draw();
-                    System.out.println("\nYou completed the board, congratulations !");
-                    finished = true;
-                }
-            } catch (PlayerLeavesException e) {
-                System.err.println("* " + e.getMessage());
-                finished = true;
-            }
+            String message = "\nWhat do you want to do : ";
+            String move = Utils.askUser(message).toLowerCase();
+            playerTurn(move);
         }
+    }
+
+    private void playerTurn(final String move) {
+        try {
+            tryMove(move);
+            playMove(move);
+            if (boardIsCompleted())
+                displayWinMessage();
+        } catch (PlayerLeavesException ex) {
+            System.out.println("- " + ex.getMessage());
+            this.isFinished = true;
+        } catch (InvalidDirectionException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void displayWinMessage() {
+        this.BOARD.draw();
+        System.out.println("\nYou completed the board, congratulations !");
+        this.isFinished = true;
     }
 
     /**
@@ -75,21 +98,18 @@ public class Level {
      *
      * @param choice the considered string
      * @throws PlayerLeavesException the player quits the game
+     * @throws InvalidDirectionException the specified direction is not valid
      * @return a boolean
      */
-    private boolean tryMove(final String choice) throws PlayerLeavesException {
-        if ("/Q".equals(choice) || "/QUIT".equals(choice))
+    private boolean tryMove(final String moves) throws PlayerLeavesException, InvalidDirectionException {
+        if ("/q".equals(moves) || "/quit".equals(moves))
             throw new PlayerLeavesException();
-
-        int i = 0;
-        boolean isValid  = true; 
-        char[] choices = choice.toCharArray();
-        while (isValid && i < choices.length) {
-            if (!moveIsValid(choices[i]))
-                isValid = false;
-            i++;
+        char[] movesArray = moves.toCharArray();
+        for (char move : movesArray) {
+            if (!moveIsValid(move))
+                throw new InvalidDirectionException(move);
         }
-        return isValid;
+        return true;
     }
 
     private boolean moveIsValid(char choice) {
@@ -110,7 +130,6 @@ public class Level {
         for (char m : move.toCharArray()) {
             String c = String.valueOf(m);
             playSingleMove(c);
-            Utils.clearScreen();
         }
     }
 
@@ -126,7 +145,6 @@ public class Level {
         }
     }
 
-
     private boolean boxCanBeMoved(final Coordinates coord, final Direction dir) {
         Coordinates newCoord = coord.next(dir);
         BoardElement element = this.BOARD.findElement(coord);
@@ -134,17 +152,15 @@ public class Level {
             return true;
         else if (element.isOfType(Type.BOX))
             return boxCanBeMoved(newCoord, dir);
-        return element.hasCollisions();
+        return !element.hasCollisions();
     }
 
     private void moveElementInDirection(final Coordinates coord, final Direction dir) {
+        Entity entity = this.BOARD.findEntity(coord);
         Coordinates newCoord = coord.next(dir);
-        Entity entity = this.BOARD.findEntity(newCoord);
         if (entity != null) {
             moveElementInDirection(newCoord, dir);
-            entity.setPosition(newCoord.next(dir));
-        } else {
-            this.BOARD.findEntity(coord).setPosition(newCoord);
+            entity.setPosition(newCoord);
         }
     }
 

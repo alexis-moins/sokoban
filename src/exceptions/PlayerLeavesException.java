@@ -5,7 +5,7 @@ package exceptions;
  *
  * @author Alexis Moins
  */
-public class PlayerLeavesException extends SokobanException {
+public final class PlayerLeavesException extends Exception {
 
     /**
      * Parameterised constructor creating a new exception.

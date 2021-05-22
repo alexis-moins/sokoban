@@ -10,8 +10,7 @@ import java.sql.SQLException;
 import java.sql.DriverManager;
 
 import game.Board;
-import builder.TextBoardBuilder;
-import exceptions.InvalidCharacterException;
+import builders.TextBoardBuilder;
 
 /**
  * Class representing a database with an open connection.
@@ -59,12 +58,12 @@ class Database {
         statement.execute(SQLRequest.CREATE_TABLE_ROWS);
         return new Database(connection);
     }
-    
+
     private static void loadDriver() {
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            System.err.println("* " + e.getMessage());
+            System.out.println("- " + e.getMessage());
         }
     }
 
@@ -79,7 +78,7 @@ class Database {
             insertIntoBoardsTable(ID, board);
             insertIntoRowsTable(ID, board);
         } catch (SQLException exception) {
-            System.err.println("* " + exception.getMessage());
+            System.out.println("- " + exception.getMessage());
         }
     }
 
@@ -136,7 +135,7 @@ class Database {
             removeFromDatabase(SQLRequest.DELETE_ROWS, ID);
             removeFromDatabase(SQLRequest.DELETE_BOARD, ID);
         } catch (SQLException e) {
-            System.err.println("* " + e.getMessage());
+            System.out.println("- " + e.getMessage());
         }
     }
 
@@ -157,7 +156,7 @@ class Database {
      *
      * @return a HashMap of string and Board object
      */ 
-    public HashMap<String, Board> getListOfBoards() throws SQLException, InvalidCharacterException {
+    public HashMap<String, Board> getListOfBoards() throws SQLException {
         String SQL = SQLRequest.GET_BOARDS_INFO;
         var statement = this.CONNECTION.createStatement();
         ResultSet info = statement.executeQuery(SQL);
@@ -179,13 +178,13 @@ class Database {
      * @return a Board object
      */
     public Board getBoardWithID(final String ID, final String name) {
-            String SQL = SQLRequest.GET_BOARD_WITH_ID;
+        String SQL = SQLRequest.GET_BOARD_WITH_ID;
         try {
             var statement = this.CONNECTION.prepareStatement(SQL);
             statement.setString(1, ID);
             ResultSet info = statement.executeQuery();
             return buildBoard(info, name);
-        } catch (InvalidCharacterException | SQLException e) { return null; }
+        } catch (SQLException e) { return null; }
     }
 
     /**
@@ -205,7 +204,7 @@ class Database {
      * @param rows the result of the SQL request
      * @return a Board object
      */
-    private Board buildBoard(final ResultSet rows, final String name) throws SQLException, InvalidCharacterException {
+    private Board buildBoard(final ResultSet rows, final String name) throws SQLException {
         var builder = new TextBoardBuilder(name);
         while (rows.next()) {
             String row = rows.getString("content");

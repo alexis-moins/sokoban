@@ -3,7 +3,7 @@ package app;
 import java.sql.SQLException;
 
 import game.Board;
-import game.Utils;
+import utils.Utils;
 import game.Level;
 import database.Administrator;
 
@@ -30,7 +30,7 @@ public final class Player {
             displayMainMenu();
             mainMenu(admin);
         } catch (SQLException e) {
-            System.err.println("* " + e.getMessage());
+            System.out.println("- " + e.getMessage());
             System.exit(1);
         }
     }
@@ -63,7 +63,7 @@ public final class Player {
                     finished = true;
                     break;
                 default:
-                    System.err.println("Invalid choice\n");
+                    System.out.println("Invalid choice\n");
                     break;
             }
         }
@@ -78,7 +78,7 @@ public final class Player {
     private static void selectBoard(Administrator admin) {
         Board board = admin.selectBoard();
         if (board == null) {
-            System.err.println("* No boards were found with that ID");
+            System.out.println("- No boards were found with that ID");
             return;
         }    
         Level level = new Level(board);
