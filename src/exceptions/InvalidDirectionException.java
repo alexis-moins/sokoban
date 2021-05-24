@@ -10,6 +10,7 @@ public final class InvalidDirectionException extends Exception {
 
     /**
      * Parameterised constructor creating a new exception.
+     *
      * @param direction the invalid direction
      */
     public InvalidDirectionException(final char direction) {

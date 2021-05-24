@@ -32,7 +32,7 @@ public final class Board {
     /**
      * The name of the board.
      */
-    private final String NAME;
+    private final String DESCRIPTION;
 
     /**
      * The player.
@@ -52,12 +52,12 @@ public final class Board {
     /**
      * Parameterised constructor creating a new board.
      *
-     * @param name the name of the board
+     * @param description the description of the board
      * @param length the length of the board
      * @param width the width of the board
      */
-    public Board(final String name, final int length, final int width) {
-        this.NAME = name;
+    public Board(final String description, final int length, final int width) {
+        this.DESCRIPTION = description;
         this.WIDTH = width;
         this.LENGTH = length;
         this.PLAYER = Entity.newPlayer(0, 0);
@@ -67,12 +67,12 @@ public final class Board {
     }
 
     /**
-     * Return the name of the board.
+     * Return the description of the board.
      *
      * @return a string
      */
-    public String name() {
-        return this.NAME;
+    public String description() {
+        return this.DESCRIPTION;
     }
 
     /**
@@ -194,13 +194,18 @@ public final class Board {
         }
     }
 
+    /**
+     * Return the character representing the element found at the given
+     * coordinates.
+     *
+     * @param coord the considered coordinates
+     * @return a character
+     */
     private char getElementCharacter(final Coordinates coord) {
         if (this.PLAYER.isAtPosition(coord))
             return this.PLAYER.character();
         BoardElement element = findElement(coord);
-        if (element != null)
-            return element.character();
-        return '.';
+        return (element == null) ? '.' : element.character();
     }
 
     /**
@@ -211,16 +216,14 @@ public final class Board {
      * @return a BoardElement object
      */
     BoardElement findElement(final Coordinates coord) {
-        BoardElement element;
-        element = findEntity(coord);
-        if (element == null)
-            element = findTile(coord);
-        return element;
+        BoardElement entity;
+        entity = findEntity(coord);
+        return (entity == null) ? findTile(coord) : entity;
     }
 
     /**
      * Return the tile found on the board at the given coordinates. Return null
-     * if no tile was found.
+     * if no tiles were found.
      *
      * @param coord the considered coordinates
      * @return a Tile object
@@ -251,7 +254,7 @@ public final class Board {
      */
     @Override
     public String toString() {
-        return "(" + this.LENGTH + "x" + this.WIDTH + ")\n" + this.NAME;
+        return "(" + this.LENGTH + "x" + this.WIDTH + ")\n" + this.DESCRIPTION;
     }
 
 }

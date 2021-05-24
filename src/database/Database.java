@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.DriverManager;
 
 import game.Board;
+import utils.Utils;
 import builders.TextBoardBuilder;
 
 /**
@@ -59,11 +60,15 @@ class Database {
         return new Database(connection);
     }
 
+    /**
+     * Loads the JDBC driver. Kept for security reasons, it seems like manually
+     * loading the driver is not mandatory anymore.
+     */
     private static void loadDriver() {
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            System.out.println("- " + e.getMessage());
+            Utils.errorMessage(e.getMessage());
         }
     }
 
@@ -77,8 +82,8 @@ class Database {
         try {
             insertIntoBoardsTable(ID, board);
             insertIntoRowsTable(ID, board);
-        } catch (SQLException exception) {
-            System.out.println("- " + exception.getMessage());
+        } catch (SQLException e) {
+            Utils.errorMessage(e.getMessage());
         }
     }
 
@@ -92,7 +97,7 @@ class Database {
         String SQL = SQLRequest.INSERT_INTO_BOARDS;
         var statement = this.CONNECTION.prepareStatement(SQL);
         statement.setString(1, ID);
-        statement.setString(2, board.name());
+        statement.setString(2, board.description());
         statement.setInt(3, board.length());
         statement.setInt(4, board.width());
         statement.executeUpdate();
@@ -115,7 +120,12 @@ class Database {
         }
     }
 
-    public List<String> getListOfValidIDs() throws SQLException {
+    /**
+     * Return the list of the IDs in the database.
+     *
+     * @return a list of strings
+     */
+    List<String> getListOfValidIDs() throws SQLException {
         String SQL = SQLRequest.GET_LIST_OF_ID;
         var statement = this.CONNECTION.createStatement();
         var IDs = statement.executeQuery(SQL);
@@ -128,19 +138,20 @@ class Database {
     /**
      * Remove the board corresponding to the given ID from the database.
      *
-     * @param ID the ID of the board in the database
+     * @param ID the ID of the board we want to remove
      */
     void remove(String ID) {
         try {
             removeFromDatabase(SQLRequest.DELETE_ROWS, ID);
             removeFromDatabase(SQLRequest.DELETE_BOARD, ID);
         } catch (SQLException e) {
-            System.out.println("- " + e.getMessage());
+            Utils.errorMessage(e.getMessage());
         }
     }
 
     /**
-     * Remove the board corresponding to the given ID, using the specified SQL request.
+     * Remove the board corresponding to the given ID from one of the tables in
+     * the database (using the specified SQL request).
      *
      * @param SQL a string representing the request
      * @param ID the ID of the board in the database
@@ -154,9 +165,9 @@ class Database {
     /**
      * Return a map of all the boards available in the database and their ID.
      *
-     * @return a HashMap of string and Board object
+     * @return a HashMap of strings (key) and Board objects (value)
      */ 
-    public HashMap<String, Board> getListOfBoards() throws SQLException {
+    HashMap<String, Board> getListOfBoards() throws SQLException {
         String SQL = SQLRequest.GET_BOARDS_INFO;
         var statement = this.CONNECTION.createStatement();
         ResultSet info = statement.executeQuery(SQL);
@@ -177,7 +188,7 @@ class Database {
      * @param name the name of the board
      * @return a Board object
      */
-    public Board getBoardWithID(final String ID, final String name) {
+    Board getBoardWithID(final String ID, final String name) {
         String SQL = SQLRequest.GET_BOARD_WITH_ID;
         try {
             var statement = this.CONNECTION.prepareStatement(SQL);

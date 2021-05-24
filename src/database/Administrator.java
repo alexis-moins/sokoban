@@ -15,6 +15,9 @@ import builders.FileBoardBuilder;
  */
 public final class Administrator {
 
+    /**
+     * The Database object the current administrator manages.
+     */
     private final Database DATABASE;
 
     /**
@@ -39,6 +42,9 @@ public final class Administrator {
         return new Administrator(database);
     }
 
+    /**
+     * Asks the user to select an entry in the administrator menu.
+     */
     public void menu() {
         boolean finished = false;
         while (!finished) {
@@ -61,12 +67,15 @@ public final class Administrator {
                     finished = true;
                     break;
                 default:
-                    System.out.println("- Invalid choice");
+                    Utils.errorMessage("Invalid choice");
                     break;
             }
         }
     }
 
+    /**
+     * Display the administrator menu and its different possible choices.
+     */
     private void informations() {
         System.out.println("\nBoard management\n");
         System.out.println("1. List boards");
@@ -83,25 +92,32 @@ public final class Administrator {
         try {
             HashMap<String, Board> boards = this.DATABASE.getListOfBoards();
             if (boards.isEmpty())
-                System.out.println("The database contains no boards");
+                Utils.errorMessage("The database contains no boards");
             else
                 boards.forEach((ID, board) -> 
                         System.out.println("\n* " + ID + " " + board));
         } catch (SQLException e) {
-            System.out.println("- " + e.getMessage());
+            Utils.errorMessage(e.getMessage());
         }
     }
 
+    /**
+     * Draw the board selected by the user on the screen.
+     */
     private void showBoard() {
         String ID = Utils.askUser("\nID of the board you want to see : ");
         if (!IDIsValid(ID)) {
-            System.out.println("- No boards found with that ID");
+            Utils.errorMessage("No boards found with that ID");
             return;
         }
         Board board = this.DATABASE.getBoardWithID(ID);
         board.draw();
     }
 
+    /**
+     * Ask the player for the path to a file, then add the content of the file
+     * as a board in the database.
+     */
     private void addBoard() {
         String path = Utils.askUser("\nPath to the file containing the board : ");
         FileBoardBuilder builder = FileBoardBuilder.deserialise(path);
@@ -111,21 +127,27 @@ public final class Administrator {
         this.DATABASE.add(ID, builder.convertToTextBuilder());
     }
 
+    /**
+     * Remove the board with the ID selected by the player from the database.
+     */
     private void removeBoard() {
         String ID = Utils.askUser("\nID of the board you want to remove : ");
         if (!IDIsValid(ID)) {
-            System.out.println("- No boards found with that ID");
+            Utils.errorMessage("No boards found with that ID");
             return;
         } 
         this.DATABASE.remove(ID);
     }
 
+    /**
+     * Return the board selected by the player.
+     *
+     * @return a Board object
+     */
     public Board selectBoard() {
         listBoards();
         String ID = Utils.askUser("\nSelect the ID of the board you want to solve : ");
-        if (!IDIsValid(ID))
-            return null;
-        return this.DATABASE.getBoardWithID(ID);
+        return IDIsValid(ID) ? this.DATABASE.getBoardWithID(ID) : null;
     }
 
     /**
@@ -139,10 +161,9 @@ public final class Administrator {
             List<String> IDs = this.DATABASE.getListOfValidIDs();
             return IDs.contains(ID);
         } catch (SQLException e) {
-            System.out.println("- " + e.getMessage());
+            Utils.errorMessage(e.getMessage());
             return false;
         }
     }
 
 }
-

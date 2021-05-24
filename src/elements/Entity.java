@@ -18,7 +18,7 @@ public class Entity extends BoardElement {
      * @param y the position on the y axis
      * @param type the type of the element
      */
-    Entity(int x, int y, Type type) {
+    private Entity(final int x, final int y, final Type type) {
         super(x, y, type);
     }
 
@@ -29,7 +29,7 @@ public class Entity extends BoardElement {
      * @param y the position on the y axis
      * @return a box Entity
      */
-    public static Entity newBox(int x, int y) {
+    public static Entity newBox(final int x, final int y) {
         return new Entity(x, y, Type.BOX);
     }
 
@@ -40,7 +40,7 @@ public class Entity extends BoardElement {
      * @param y the position on the y axis
      * @return a player Entity
      */
-    public static Entity newPlayer(int x, int y) {
+    public static Entity newPlayer(final int x, final int y) {
         return new Entity(x, y, Type.PLAYER);
     }
 
@@ -49,7 +49,7 @@ public class Entity extends BoardElement {
      *
      * @param coord the new position
      */
-    public void setPosition(Coordinates coord) {
+    public void setPosition(final Coordinates coord) {
         this.coordinates = new Coordinates(coord.x(), coord.y());
     }
 

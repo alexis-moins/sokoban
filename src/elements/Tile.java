@@ -17,7 +17,7 @@ public final class Tile extends BoardElement {
      * @param y the position on the y axis
      * @param type the type of the element
      */
-    Tile(final int x, final int y, final Type type) {
+    private Tile(final int x, final int y, final Type type) {
         super(x, y, type);
     }
 

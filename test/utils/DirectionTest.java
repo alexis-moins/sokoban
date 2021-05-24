@@ -4,7 +4,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
+ * Class testing the behaviour of methods in class Direction.
+ * 
  * @author Alexis Moins
  */
 public class DirectionTest {

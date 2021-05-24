@@ -3,8 +3,10 @@ package app;
 import java.sql.SQLException;
 
 import game.Board;
-import utils.Utils;
 import game.Level;
+
+import utils.Utils;
+
 import database.Administrator;
 
 /**
@@ -30,11 +32,14 @@ public final class Player {
             displayMainMenu();
             mainMenu(admin);
         } catch (SQLException e) {
-            System.out.println("- " + e.getMessage());
+            Utils.errorMessage(e.getMessage());
             System.exit(1);
         }
     }
 
+    /**
+     * Display the main menu and its different possible choices.
+     */
     private static void displayMainMenu() {
         System.out.println("\nSokoban (そうこばん)\n");
         System.out.println("1. Play a game");
@@ -63,7 +68,7 @@ public final class Player {
                     finished = true;
                     break;
                 default:
-                    System.out.println("Invalid choice\n");
+                    Utils.errorMessage("Invalid choice\n");
                     break;
             }
         }
@@ -78,11 +83,11 @@ public final class Player {
     private static void selectBoard(Administrator admin) {
         Board board = admin.selectBoard();
         if (board == null) {
-            System.out.println("- No boards were found with that ID");
-            return;
-        }    
-        Level level = new Level(board);
-        level.start();
+                    Utils.errorMessage("No boards were found with that ID");
+        } else {
+            Level level = new Level(board);
+            level.start();
+        }
     }
 
 }

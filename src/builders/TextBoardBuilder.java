@@ -14,11 +14,6 @@ import utils.Coordinates;
 public final class TextBoardBuilder implements BoardBuilder {
 
     /**
-     * The name of the board
-     */
-    private final String NAME;
-
-    /**
      * The width of the board
      */
     private int WIDTH;
@@ -29,6 +24,11 @@ public final class TextBoardBuilder implements BoardBuilder {
     private int LENGTH;
 
     /**
+     * The description of the board
+     */
+    private final String DESCRIPTION;
+
+    /**
      * The list of the rows of the board
      */
     private final ArrayList<String> ROWS;
@@ -36,22 +36,22 @@ public final class TextBoardBuilder implements BoardBuilder {
     /**
      * Parameterised constructor creating a new TextBoardBuilder object.
      *
-     * @param name the name of the board
+     * @param description the description of the board
      */
-    public TextBoardBuilder(String name) {
+    public TextBoardBuilder(String description) {
         this.WIDTH = 0;
         this.LENGTH = 0;
-        this.NAME = name;
+        this.DESCRIPTION = description;
         this.ROWS = new ArrayList<>();
     }
 
     /**
-     * Return the name of the board.
+     * Return the description of the board.
      *
      * @return a string
      */
-    public String name() {
-        return this.NAME;
+    public String description() {
+        return this.DESCRIPTION;
     }
 
     /**
@@ -64,7 +64,7 @@ public final class TextBoardBuilder implements BoardBuilder {
     }
 
     /**
-     * Return the length of the board.
+     * Return the length of the board (number of columns).
      *
      * @return an integer
      */
@@ -83,9 +83,9 @@ public final class TextBoardBuilder implements BoardBuilder {
     }
 
     /**
-     * Add the given string to the board builder.
+     * Add the given string to the TextBoardBuilder.
      *
-     * @param row a string to be added
+     * @param row the to be added
      */
     public void append(final String row) {
         this.ROWS.add(row);
@@ -101,7 +101,7 @@ public final class TextBoardBuilder implements BoardBuilder {
      */
     @Override
     public Board build() {
-        var board = new Board(this.NAME, this.LENGTH, this.WIDTH);
+        var board = new Board(this.DESCRIPTION, this.LENGTH, this.WIDTH);
         for (int i = 0; i < this.ROWS.size(); i++) {
             String row = this.ROWS.get(i);
             deserialise(row, i, board);

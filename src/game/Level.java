@@ -2,13 +2,15 @@ package game;
 
 import elements.Entity;
 import elements.BoardElement;
-import utils.Direction;
-import utils.Type;
-import utils.Utils;
-import utils.Coordinates;
+import elements.Tile;
 
 import exceptions.PlayerLeavesException;
 import exceptions.InvalidDirectionException;
+
+import utils.Type;
+import utils.Utils;
+import utils.Direction;
+import utils.Coordinates;
 
 /**
  * Class representing a level in the game.
@@ -49,20 +51,20 @@ public class Level {
      * @return a boolean
      */
     private boolean boardIsCompleted() {
-        for (var target : this.BOARD.targets()) {
-            boolean found = false; int i = 0;
+        boolean found = false;
+        for (Tile target : this.BOARD.targets()) {
             Coordinates coord = target.coordinates();
-            while (!found && i < this.BOARD.boxes().size()) {
-                if (this.BOARD.boxes().get(i).isAtPosition(coord))
-                    found = true;
-                i++;
-            }
-
+            for (Entity box : this.BOARD.boxes())
+                found = (found == false) ? box.isAtPosition(coord) : true;
             if (!found)
                 return false;
-        } return true;
+        } 
+        return true;
     }
 
+    /**
+     * Start playing on the level.
+     */
     public void start() {
         while (!isFinished) {
             Utils.clearScreen();
@@ -73,20 +75,26 @@ public class Level {
         }
     }
 
+    /**
+     * Perform the player turn with the given move.
+     */
     private void playerTurn(final String move) {
         try {
             tryMove(move);
             playMove(move);
             if (boardIsCompleted())
                 displayWinMessage();
-        } catch (PlayerLeavesException ex) {
-            System.out.println("- " + ex.getMessage());
+        } catch (PlayerLeavesException e) {
+            Utils.errorMessage(e.getMessage());
             this.isFinished = true;
-        } catch (InvalidDirectionException ex) {
-            System.out.println(ex.getMessage());
+        } catch (InvalidDirectionException e) {
+            Utils.errorMessage(e.getMessage());
         }
     }
 
+    /**
+     * Display a congratulation message and stop the level.
+     */
     private void displayWinMessage() {
         this.BOARD.draw();
         System.out.println("\nYou completed the board, congratulations !");
@@ -112,6 +120,11 @@ public class Level {
         return true;
     }
 
+    /**
+     * Return true if the given char is considered as a valid move on the board.
+     *
+     * @return a boolean
+     */
     private boolean moveIsValid(char choice) {
         for (char move : expectedMoves) {
             if (move == choice)
@@ -121,9 +134,9 @@ public class Level {
     }
 
     /**
-     * Play the selected move on the current board.
+     * Play the given moves on the current board.
      *
-     * @param move the user selected move
+     * @param move the player selected move
      */
     private void playMove(final String move) {
         Utils.clearScreen();
@@ -133,6 +146,11 @@ public class Level {
         }
     }
 
+    /**
+     * Play the given move on the current board.
+     *
+     * @param move the user selected move
+     */
     private void playSingleMove(final String move) {
         Direction dir = Direction.correspondingTo(move);
         Coordinates coord = this.BOARD.player().coordinates().next(dir);
@@ -145,16 +163,30 @@ public class Level {
         }
     }
 
+    /**
+     * Return true if there are no obstacles in the given direction, starting at
+     * the given coordinates, that would prevent a box from being moved.
+     *
+     * @param coord the considered starting coordinates
+     * @param dir the considered direction
+     * @return a boolean
+     */
     private boolean boxCanBeMoved(final Coordinates coord, final Direction dir) {
-        Coordinates newCoord = coord.next(dir);
         BoardElement element = this.BOARD.findElement(coord);
         if (element == null)
             return true;
-        else if (element.isOfType(Type.BOX))
-            return boxCanBeMoved(newCoord, dir);
-        return !element.hasCollisions();
+        Coordinates newCoord = coord.next(dir);
+        return element.isOfType(Type.BOX) ? boxCanBeMoved(newCoord, dir) : 
+            !element.hasCollisions();
     }
 
+    /**
+     * Move all the entities in the given direction, starting at the given
+     * coordinates.
+     *
+     * @param coord the considered starting coordinates
+     * @param dir the considered direction
+     */
     private void moveElementInDirection(final Coordinates coord, final Direction dir) {
         Entity entity = this.BOARD.findEntity(coord);
         Coordinates newCoord = coord.next(dir);
