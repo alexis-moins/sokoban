@@ -10,16 +10,6 @@ import java.util.Scanner;
 public class Utils {
 
     /**
-     * The ASCII escape codes to produce red-colored output.
-     */
-    private static final String ERROR = "\u001B[31m";
-
-    /**
-     * The ASCII escape codes to produce white-colored output.
-     */
-    private static final String NORMAL = "\u001B[0m";
-
-    /**
      * Print a message on screen and return the input typed by the player.
      *
      * @param message the string that will be printed
@@ -51,12 +41,12 @@ public class Utils {
 
     /**
      * Print the given string on screen as an error message (red foreground on
-     * normal background).
+     * default background).
      * 
      * @param message the error message
      */
     public static void errorMessage(final String message) {
-        System.out.println(ERROR + message + NORMAL);
+        System.out.println(Color.RED + message + Color.DEFAULT);
     }
 
 }

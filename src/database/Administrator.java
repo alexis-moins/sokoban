@@ -48,7 +48,7 @@ public final class Administrator {
     public void menu() {
         boolean finished = false;
         while (!finished) {
-            informations();
+            displayDatabaseMenu();
             String choice = Utils.getInput();
             switch (choice) {
                 case "1":
@@ -76,7 +76,7 @@ public final class Administrator {
     /**
      * Display the administrator menu and its different possible choices.
      */
-    private void informations() {
+    private void displayDatabaseMenu() {
         System.out.println("\nBoard management\n");
         System.out.println("1. List boards");
         System.out.println("2. Show board");
@@ -120,7 +120,7 @@ public final class Administrator {
      */
     private void addBoard() {
         String path = Utils.askUser("\nPath to the file containing the board : ");
-        FileBoardBuilder builder = FileBoardBuilder.deserialise(path);
+        FileBoardBuilder builder = FileBoardBuilder.deserialize(path);
         if (builder == null)
             return;
         String ID = Utils.askUser("ID associated with the board : ");

@@ -34,7 +34,7 @@ public final class FileBoardBuilder implements BoardBuilder {
      * @param path the path leading to the text file
      * @return a FileBoardBuilder object
      */
-    public static FileBoardBuilder deserialise(String path) {
+    public static FileBoardBuilder deserialize(String path) {
         var builder = new FileBoardBuilder();
         try (Scanner scanner = new Scanner(new File(path))) {
             while (scanner.hasNextLine())

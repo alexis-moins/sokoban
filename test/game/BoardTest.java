@@ -26,7 +26,7 @@ public class BoardTest {
      */
     @Test
     public void targetsTest() {
-        FileBoardBuilder builder = FileBoardBuilder.deserialise("data/boards/first.txt");
+        FileBoardBuilder builder = FileBoardBuilder.deserialize("data/boards/first.txt");
         Board board = builder.build();
         List<Tile> tiles = board.targets();
         assertEquals(2, tiles.size());
@@ -42,7 +42,7 @@ public class BoardTest {
      */
     @Test
     public void boxesTest() {
-        FileBoardBuilder builder = FileBoardBuilder.deserialise("data/boards/first.txt");
+        FileBoardBuilder builder = FileBoardBuilder.deserialize("data/boards/first.txt");
         Board board = builder.build();
         List<Entity> entities = board.boxes();
         assertEquals(2, entities.size());
@@ -58,7 +58,7 @@ public class BoardTest {
      */
     @Test
     public void findElementTest() {
-        FileBoardBuilder builder = FileBoardBuilder.deserialise("data/boards/first.txt");
+        FileBoardBuilder builder = FileBoardBuilder.deserialize("data/boards/first.txt");
         Board board = builder.build();
 
         Coordinates coord = new Coordinates(2, 1);

@@ -67,33 +67,6 @@ public final class Board {
     }
 
     /**
-     * Return the description of the board.
-     *
-     * @return a string
-     */
-    public String description() {
-        return this.DESCRIPTION;
-    }
-
-    /**
-     * Return the length of the board.
-     * 
-     * @return an integer
-     */
-    public int length() {
-        return this.LENGTH;
-    }
-
-    /**
-     * Return the width of the board.
-     * 
-     * @return an integer
-     */
-    public int width() {
-        return this.WIDTH;
-    }
-
-    /**
      * Return the player.
      *
      * @return an Entity object
@@ -131,6 +104,20 @@ public final class Board {
      */
     public void addVerticalWall(final int x, final int y, final int size) {
         for (int i = y; i < y + size; i++) {
+            Tile wall = Tile.newWall(x, y);
+            this.TILES.add(wall);
+        }
+    }
+    
+    /**
+     * Add an horizontal wall of the given size at the given coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param size the size of the wall
+     */
+    public void addHorizontalWall(final int x, final int y, final int size) {
+        for (int i = x; i < x + size; i++) {
             Tile wall = Tile.newWall(x, y);
             this.TILES.add(wall);
         }

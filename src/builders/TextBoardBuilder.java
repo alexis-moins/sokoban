@@ -104,7 +104,7 @@ public final class TextBoardBuilder implements BoardBuilder {
         var board = new Board(this.DESCRIPTION, this.LENGTH, this.WIDTH);
         for (int i = 0; i < this.ROWS.size(); i++) {
             String row = this.ROWS.get(i);
-            deserialise(row, i, board);
+            deserialize(row, i, board);
         }
         return board;
     }
@@ -116,7 +116,7 @@ public final class TextBoardBuilder implements BoardBuilder {
      * @param y the number of the considered row
      * @param board the board of the game
      */
-    private void deserialise(String row, int y, Board board) {
+    private void deserialize(String row, int y, Board board) {
         char[] tiles = row.toCharArray();
         for (int x = 0; x < tiles.length; x++) {
             char tile = tiles[x];
