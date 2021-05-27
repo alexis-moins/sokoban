@@ -12,7 +12,6 @@ nb-configuration.xml
 
 # OS & editor
 *.db
-*.txt
 *.swp
 .DS_Store
 

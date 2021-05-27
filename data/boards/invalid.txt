@@ -1,0 +1,7 @@
+A board containing an invalid character at 4x4
+############
+#x#........#
+#.#C...PC..#
+#.......####
+#...$.....x#
+############
