@@ -15,10 +15,10 @@ public class DirectionTest {
      */
     @Test
     public void correspondingToTest() {
-        assertEquals(Direction.correspondingTo("U"), Direction.NORTH);
-        assertEquals(Direction.correspondingTo("D"), Direction.SOUTH);
-        assertEquals(Direction.correspondingTo("R"), Direction.EAST);
-        assertEquals(Direction.correspondingTo("L"), Direction.WEST);
+        assertEquals(Direction.correspondingTo('u'), Direction.NORTH);
+        assertEquals(Direction.correspondingTo('d'), Direction.SOUTH);
+        assertEquals(Direction.correspondingTo('r'), Direction.EAST);
+        assertEquals(Direction.correspondingTo('l'), Direction.WEST);
     }
     
 }

@@ -7,7 +7,7 @@ import java.util.Scanner;
  *
  * @author Alexis Moins
  */
-public class Utils {
+public final class Utils {
 
     /**
      * Print a message on screen and return the input typed by the player.
@@ -15,7 +15,7 @@ public class Utils {
      * @param message the string that will be printed
      * @return a string
      */
-    public static String askUser(String message) {
+    public static String askPlayer(String message) {
         System.out.print(message);
         return getInput();
     }
@@ -50,4 +50,3 @@ public class Utils {
     }
 
 }
-

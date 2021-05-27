@@ -5,7 +5,7 @@ package database;
  *
  * @author Alexis Moins
  */
-class SQLRequest {
+final class SQLRequest {
 
     /**
      * Request for creating the table BOARDS if it doesn't already exist.

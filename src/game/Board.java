@@ -30,7 +30,7 @@ public final class Board {
     private final int LENGTH;
 
     /**
-     * The name of the board.
+     * The description of the board.
      */
     private final String DESCRIPTION;
 
@@ -163,7 +163,7 @@ public final class Board {
             System.out.print("\n" + i);
             for (int j = 0; j < this.LENGTH; j++) {
                 Coordinates coord = new Coordinates(j, i);
-                char character = getElementCharacter(coord);
+                char character = getCorrectCharacter(coord);
                 System.out.print(" " + character);
             }
         }
@@ -188,7 +188,7 @@ public final class Board {
      * @param coord the considered coordinates
      * @return a character
      */
-    private char getElementCharacter(final Coordinates coord) {
+    private char getCorrectCharacter(final Coordinates coord) {
         if (this.PLAYER.isAtPosition(coord))
             return this.PLAYER.character();
         BoardElement element = findElement(coord);

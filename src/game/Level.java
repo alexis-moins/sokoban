@@ -17,13 +17,18 @@ import utils.Coordinates;
  *
  * @author Alexis Moins
  */
-public class Level {
+public final class Level {
 
     /**
      * The playable board of the level.
      */
     private final Board BOARD;
 
+    /**
+     * The error message of the last move.
+     */
+    private String errorMessage;
+    
     /**
      * True if the board of the level is completed.
      */
@@ -39,8 +44,9 @@ public class Level {
      *
      * @param board the board of the level
      */
-    public Level(Board board) {
+    public Level(final Board board) {
         this.BOARD = board;
+        this.errorMessage = "";
         this.isFinished = false;
     }
 
@@ -69,8 +75,9 @@ public class Level {
         while (!isFinished) {
             Utils.clearScreen();
             this.BOARD.draw();
-            String message = "\nWhat do you want to do : ";
-            String move = Utils.askUser(message).toLowerCase();
+            Utils.errorMessage(this.errorMessage);
+            String message = "What do you want to do : ";
+            String move = Utils.askPlayer(message).toLowerCase();
             playerTurn(move);
         }
     }
@@ -88,7 +95,7 @@ public class Level {
             Utils.errorMessage(e.getMessage());
             this.isFinished = true;
         } catch (InvalidDirectionException e) {
-            Utils.errorMessage(e.getMessage());
+            this.errorMessage = "\n" + e.getMessage();
         }
     }
 
@@ -125,7 +132,7 @@ public class Level {
      *
      * @return a boolean
      */
-    private boolean moveIsValid(char choice) {
+    private boolean moveIsValid(final char choice) {
         for (char move : expectedMoves) {
             if (move == choice)
                 return true;
@@ -140,10 +147,9 @@ public class Level {
      */
     private void playMove(final String move) {
         Utils.clearScreen();
-        for (char m : move.toCharArray()) {
-            String c = String.valueOf(m);
-            playSingleMove(c);
-        }
+        this.errorMessage = "";
+        for (char m : move.toCharArray())
+            playSingleMove(m);
     }
 
     /**
@@ -151,7 +157,7 @@ public class Level {
      *
      * @param move the user selected move
      */
-    private void playSingleMove(final String move) {
+    private void playSingleMove(final char move) {
         Direction dir = Direction.correspondingTo(move);
         Coordinates coord = this.BOARD.player().coordinates().next(dir);
         BoardElement destination = this.BOARD.findElement(coord);

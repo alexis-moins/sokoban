@@ -66,24 +66,24 @@ public enum Direction {
     }
 
     /**
-     * Return the direction corresponding to the given string.
+     * Return the direction corresponding to the given char.
      *
      * @param move the considered move on the board
      * @return a Direction object
      */
-    public static Direction correspondingTo(String move) {
+    public static Direction correspondingTo(final char move) {
         Direction direction = null;
-        switch (move.toUpperCase()) {
-            case "U":
+        switch (move) {
+            case 'u':
                 direction = Direction.NORTH;
                 break;
-            case "D":
+            case 'd':
                 direction = Direction.SOUTH;
                 break;
-            case "R":
+            case 'r':
                 direction = Direction.EAST;
                 break;
-            case "L":
+            case 'l':
                 direction = Direction.WEST;
                 break;
         }

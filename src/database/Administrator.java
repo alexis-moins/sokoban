@@ -25,7 +25,7 @@ public final class Administrator {
      *
      * @param database a Database object
      */
-    Administrator(Database database) {
+    private Administrator(Database database) {
         this.DATABASE = database;
     }
 
@@ -105,7 +105,7 @@ public final class Administrator {
      * Draw the board selected by the user on the screen.
      */
     private void showBoard() {
-        String ID = Utils.askUser("\nID of the board you want to see : ");
+        String ID = Utils.askPlayer("\nID of the board you want to see : ");
         if (!IDIsValid(ID)) {
             Utils.errorMessage("No boards found with that ID");
             return;
@@ -119,11 +119,11 @@ public final class Administrator {
      * as a board in the database.
      */
     private void addBoard() {
-        String path = Utils.askUser("\nPath to the file containing the board : ");
+        String path = Utils.askPlayer("\nPath to the file containing the board : ");
         FileBoardBuilder builder = FileBoardBuilder.deserialize(path);
         if (builder == null)
             return;
-        String ID = Utils.askUser("ID associated with the board : ");
+        String ID = Utils.askPlayer("ID associated with the board : ");
         this.DATABASE.add(ID, builder.convertToTextBuilder());
     }
 
@@ -131,7 +131,7 @@ public final class Administrator {
      * Remove the board with the ID selected by the player from the database.
      */
     private void removeBoard() {
-        String ID = Utils.askUser("\nID of the board you want to remove : ");
+        String ID = Utils.askPlayer("\nID of the board you want to remove : ");
         if (!IDIsValid(ID)) {
             Utils.errorMessage("No boards found with that ID");
             return;
@@ -146,7 +146,7 @@ public final class Administrator {
      */
     public Board selectBoard() {
         listBoards();
-        String ID = Utils.askUser("\nSelect the ID of the board you want to solve : ");
+        String ID = Utils.askPlayer("\nSelect the ID of the board you want to solve : ");
         return IDIsValid(ID) ? this.DATABASE.getBoardWithID(ID) : null;
     }
 

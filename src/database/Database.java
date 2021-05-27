@@ -18,7 +18,7 @@ import builders.TextBoardBuilder;
  *
  * @author Alexis Moins
  */
-class Database {
+final class Database {
 
     /**
      * The connection to the database
@@ -40,7 +40,7 @@ class Database {
      *
      * @param connection the valid connection to the database
      */
-    Database(Connection connection) {
+    private Database(Connection connection) {
         this.CONNECTION = connection;
     }
 
